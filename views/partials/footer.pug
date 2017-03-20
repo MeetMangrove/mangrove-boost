@@ -1,0 +1,13 @@
+footer
+  .container.text-center.white
+    if user
+      a(href='/account') Account
+      | 
+      a(href='/logout') Logout
+    else
+      a(href='/login') Login
+    p Built by 
+    a(href='https://twitter.com/adrienm', target='_blank') @adrien,
+    a(href='https://twitter.com/adrianavecc', target='_blank') @adrianavecc,
+    a(href='https://twitter.com/stevensanseau', target='_blank') @steven and
+    a(href='https://twitter.com/etienne_mgno', target='_blank') @etienne_mangino

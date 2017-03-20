@@ -1,0 +1,91 @@
+@import "lib/bootstrap/bootstrap";
+@import "lib/font-awesome/font-awesome";
+
+// Scaffolding
+// -------------------------
+
+
+body {
+  background: #FF512F;
+  background: -webkit-linear-gradient(right, #FF512F, #DD2476);
+  background: linear-gradient(to left, #FF512F, #DD2476);
+  text-align: center;
+  color: white;
+}
+
+header{
+  margin-top: 20px;
+}
+
+.main-container{
+  border-radius: 10px;
+  background: white;
+  padding: 40px;
+  color: #53585F;
+}
+
+.primary-btn{
+  background: #F2384D;
+  border: 1px solid #C72F40;
+  color: white;
+
+  :hover{
+    text-transform: none;
+    color: white;
+  }
+}
+
+.btn-slack{
+  height: 45px;
+  border: 1px solid #DDDEE0;
+  padding: 5px;
+}
+
+.white{
+  color: white;
+}
+
+.loader{
+  list-style: none;
+  float:left;
+  display: inline-block;
+
+  li{
+    content: "";
+    display: inline-block;
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    background-color: #DDDEE0;
+    margin-left: 30px;
+  }
+
+  li:before{
+    content: "";
+    width: 30px;
+    height: 1px;
+    border: 1px solid #DDDEE0;
+    display: inline-block;
+    margin: 0px 0px 6px -45px;
+  }
+
+  li:first-child:before{
+    display: none;
+  }
+
+  .active{
+    color: #F2384D;
+    background-color: #F2384D;
+  }
+
+  li.active:before{
+    color: #F2384D;
+    border-color: #F2384D;
+  }
+
+  .current{
+    width: 20px;
+    height: 20px;
+  }
+
+}
