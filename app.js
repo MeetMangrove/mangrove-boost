@@ -35,6 +35,7 @@ const userController = require('./controllers/user');
 const apiController = require('./controllers/api');
 const contactController = require('./controllers/contact');
 const onboardingController = require('./controllers/onboarding');
+const campaignController = require('./controllers/campaign');
 
 /**
  * API keys and Passport configuration.
@@ -123,6 +124,9 @@ app.get('/', homeController.index);
 app.get('/onboarding/step1', onboardingController.step1);
 app.get('/onboarding/step2', passportConfig.isAuthenticated, onboardingController.step2);
 app.get('/onboarding/step3', passportConfig.isAuthenticated, onboardingController.step3);
+
+app.get('/campaign/all', passportConfig.isAdmin, campaignController.all);
+app.get('/campaign/edit/:id', passportConfig.isAdmin, campaignController.edit);
 
 app.get('/login', userController.getLogin);
 app.post('/login', userController.postLogin);

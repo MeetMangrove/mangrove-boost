@@ -225,6 +225,16 @@ exports.isAuthenticated = (req, res, next) => {
 };
 
 /**
+ * Login Required middleware.
+ */
+exports.isAdmin = (req, res, next) => {
+  if (req.isAuthenticated() && req.user.role == "admin") {
+    return next();
+  }
+  res.redirect('/');
+};
+
+/**
  * Authorization Required middleware.
  */
 exports.isAuthorized = (req, res, next) => {
