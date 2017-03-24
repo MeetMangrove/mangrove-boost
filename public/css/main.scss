@@ -4,6 +4,20 @@
 // Scaffolding
 // -------------------------
 
+@font-face {
+  font-family: Proxima_regular;
+  src: url("../fonts/proxima-nova-regular.ttf");
+}
+
+@font-face {
+  font-family: Proxima_bold;
+  src: url("../fonts/Mark Simonson - Proxima Nova Alt Bold-webfont.ttf");
+}
+
+@font-face {
+  font-family: Proxima_semi_bold;
+  src: url("../fonts/Mark Simonson - Proxima Nova Semibold-webfont.ttf");
+}
 
 body {
   background: #FF512F;
@@ -11,23 +25,46 @@ body {
   background: linear-gradient(to left, #FF512F, #DD2476);
   text-align: center;
   color: white;
+  font-family: Proxima_regular;
+}
+
+h1{
+  font-family: Proxima_semi_bold;
+}
+
+h2{
+  font-size: 26px;
 }
 
 header{
-  margin-top: 20px;
+  margin-top: 50px;
+  margin-bottom: 50px;
 }
 
 .main-container{
   border-radius: 10px;
   background: white;
-  padding: 40px;
+  padding: 50px 40px;
   color: #53585F;
+  -webkit-box-shadow: -2px 2px 3px 0px rgba(0,0,0,0.25);
+  -moz-box-shadow: -2px 2px 3px 0px rgba(0,0,0,0.25);
+  box-shadow: -2px 2px 3px 0px rgba(0,0,0,0.25);
+}
+
+footer{
+  margin-top: 50px;
+
+}
+
+.btn-home{
+  margin-top: 30px;
 }
 
 .primary-btn{
   background: #F2384D;
   border: 1px solid #C72F40;
   color: white;
+  padding: 10px 40px;
 
   :hover{
     text-transform: none;
@@ -56,6 +93,7 @@ footer{
   list-style: none;
   float:left;
   display: inline-block;
+  margin-left: -20px;
 
   li{
     content: "";
@@ -95,4 +133,20 @@ footer{
     height: 20px;
   }
 
+}
+
+.btn-block{
+  height: 45px;
+  width: 200px;
+  color: white;
+  font-family: Proxima_semi_bold;
+  font-size: 16px;
+  line-height: 33px;
+}
+
+.btn-twitter{
+  background-color: #4099FF;
+}
+.btn-facebook{
+  background-color: #3b5998;
 }

@@ -1,24 +1,28 @@
 extends ../layout
 
 block content
-  .main-container
-    .row.justify-content-md-center
-      .col-md-3.offset-sm-4
-        ul.loader
-          li.point.active
-          li.point.active
-          li.point
-    h2 Nice to meet you #{user.profile.name}! 👋
-    h4 Where do you want to spread the vibe?
-    if !user.twitter 
-      a.btn.btn-block.btn-slack.btn-social(href='/auth/twitter')
-        i.fa.fa-twitter
-          | Sign in with Twitter
-    else
-      | You are already linked your Twitter account 🏄🏻
-    if !user.facebook
-      a.btn.btn-block.btn-slack.btn-social(href='/auth/facebook')
-        i.fa.fa-facebook
-          | Sign in with Facebook
-    else
-      | You are already linked your Facebook account 🏄🏻
+  .row
+    .col-md-6.col-md-offset-3
+      .main-container
+        .row.justify-content-md-center
+          .col-md-6.col-md-offset-3
+            ul.loader
+              li.point.active
+              li.point.active
+              li.point
+        h2 Nice to meet you #{user.profile.name}! 👋
+        br
+        h4 Where do you want to spread the vibe?
+        br
+        if !user.twitter 
+          a.btn.btn-block.btn-twitter.btn-social(href='/auth/twitter')
+            i.fa.fa-twitter
+              | Sign in with Twitter
+        else
+          | You are already linked your Twitter account 🏄🏻
+        if !user.facebook
+          a.btn.btn-block.btn-facebook.btn-social(href='/auth/facebook')
+            i.fa.fa-facebook
+              | Sign in with Facebook
+        else
+          | You are already linked your Facebook account 🏄🏻

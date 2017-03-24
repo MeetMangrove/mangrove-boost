@@ -1,14 +1,16 @@
 extends ../layout
 
-block content
-  .main-container
-    .row.justify-content-md-center
-      .col-md-3.offset-sm-4
-        ul.loader
-          li.point.active
-          li.point
-          li.point
-    h4 What’s your Slack handle, my friend?
-    a.btn.btn-slack.btn-social(href='/auth/slack')
-      i.fa.fa-slack
-      | Sign in with Slack
+block content  
+  .row
+    .col-md-6.col-md-offset-3
+      .main-container
+        .row.justify-content-md-center
+          .col-md-3.offset-sm-4
+            ul.loader
+              li.point.active
+              li.point
+              li.point
+        h4 What’s your Slack handle, my friend?
+        a.btn.btn-slack.btn-social(href='/auth/slack')
+          i.fa.fa-slack
+          | Sign in with Slack
