@@ -5,7 +5,7 @@ const campaignSchema = new mongoose.Schema({
   name: String,
   link: String,
   content: String,
-  date: Date,
+  date_release: Date,
   profiles: Array
 }, { timestamps: true });
 

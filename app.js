@@ -159,11 +159,11 @@ app.post('/api/upload', upload.single('myFile'), apiController.postFileUpload);
  */
 app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email', 'public_profile'] }));
 app.get('/auth/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/onboarding/step2' }), (req, res) => {
-  res.redirect('/onboarding/step3');
+  res.redirect('/onboarding/step2');
 });
 app.get('/auth/twitter', passport.authenticate('twitter'));
 app.get('/auth/twitter/callback', passport.authenticate('twitter', { failureRedirect: '/onboarding/step2' }), (req, res) => {
-  res.redirect('/onboarding/step3');
+  res.redirect('/onboarding/step2');
 });
 
 app.get('/auth/slack', passport.authenticate('slack'));

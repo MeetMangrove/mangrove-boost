@@ -59,22 +59,41 @@ footer{
   margin-top: 30px;
 }
 
+.btn:hover{
+  text-transform: none;
+  color: white;
+  font-weight: bold;
+}
+
 .primary-btn{
   background: #F2384D;
   border: 1px solid #C72F40;
   color: white;
   padding: 10px 40px;
-
-  :hover{
-    text-transform: none;
-    color: white;
-  }
 }
 
 .btn-slack{
   height: 45px;
   border: 1px solid #DDDEE0;
   padding: 5px;
+  color: #333333 !important;
+}
+
+.btn i{
+  margin-right: 10px;
+}
+
+.btn-slack{
+  color: #333333;
+}
+
+.form-control{
+  height: 45px;
+  border:2px solid #DDDEE0;
+}
+
+.margin-bottom-30{
+  margin-bottom: 30px;
 }
 
 footer{
