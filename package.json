@@ -1,6 +1,5 @@
 {
   "name": "mangrove-boost",
-  "version": "1.0",
   "description": "Mangrove Boost",
   "repository": {
     "type": "git",
@@ -25,7 +24,7 @@
     "connect-mongo": "^1.3.2",
     "dotenv": "^4.0.0",
     "errorhandler": "^1.4.3",
-    "express": "^4.14.0",
+    "express": "^4.15.2",
     "express-flash": "^0.0.2",
     "express-session": "^1.14.2",
     "express-status-monitor": "^0.1.5",
@@ -43,6 +42,7 @@
     "node-linkedin": "^0.5.4",
     "node-sass-middleware": "^0.11.0",
     "nodemailer": "^3.1.7",
+    "nodemon": "^1.11.0",
     "passport": "0.3.2",
     "passport-facebook": "^2.1.1",
     "passport-github": "^1.1.0",
