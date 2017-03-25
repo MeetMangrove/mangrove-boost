@@ -11,12 +11,12 @@
 
 @font-face {
   font-family: Proxima_bold;
-  src: url("../fonts/Mark Simonson - Proxima Nova Alt Bold-webfont.ttf");
+  src: url("../fonts/proxima_bold.ttf");
 }
 
 @font-face {
   font-family: Proxima_semi_bold;
-  src: url("../fonts/Mark Simonson - Proxima Nova Semibold-webfont.ttf");
+  src: url("../fonts/proxima_semi_bold.ttf");
 }
 
 body {
@@ -52,8 +52,7 @@ header{
 }
 
 footer{
-  margin-top: 50px;
-
+  margin-top: 10px;
 }
 
 .btn-home{
@@ -139,7 +138,7 @@ footer{
   height: 45px;
   width: 200px;
   color: white;
-  font-family: Proxima_semi_bold;
+  font-family: Proxima_semi_bold !important;
   font-size: 16px;
   line-height: 33px;
 }
