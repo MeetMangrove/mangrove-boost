@@ -18,15 +18,15 @@ block content
         .row
           .col-md-6
             if !user.twitter 
-              a.btn.btn-block.btn-twitter.btn-social(href='/auth/twitter')
+              a.btn.btn-block.btn-twitter.btn-social.text-center(href='/auth/twitter')
                 i.fa.fa-twitter
-                  | Sign in with Twitter
+                | Connect with Twitter
             else
               | You are already linked your Twitter account 🏄🏻
           .col-md-6
             if !user.facebook
-              a.btn.btn-block.btn-facebook.btn-social(href='/auth/facebook')
+              a.btn.btn-block.btn-facebook.btn-social.text-center(href='/auth/facebook')
                 i.fa.fa-facebook
-                  | Sign in with Facebook
+                | Connect with Facebook
             else
               | You are already linked your Facebook account 🏄🏻
