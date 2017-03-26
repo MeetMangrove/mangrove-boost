@@ -126,7 +126,9 @@ app.get('/onboarding/step2', passportConfig.isAuthenticated, onboardingControlle
 app.get('/onboarding/step3', passportConfig.isAuthenticated, onboardingController.step3);
 
 app.get('/campaign/all', passportConfig.isAdmin, campaignController.all);
+app.get('/campaign/edit/', passportConfig.isAdmin, campaignController.edit);
 app.get('/campaign/edit/:id', passportConfig.isAdmin, campaignController.edit);
+app.post('/campaign/edit/', passportConfig.isAdmin, campaignController.postCampaign);
 
 app.get('/login', userController.getLogin);
 app.post('/login', userController.postLogin);

@@ -7,6 +7,9 @@ footer
     else
       a(href='/login') Login
     br
+    if user.role == "admin"
+      a(href='/campaign/all', target='_blank') Admin
+    br
     a(href='http://www.mangrove.io/?utm_source=mangrove-boost&utm_campaign=footer_link', target='_blank')
       img(src='/mangrove_logo-blanc.png', width='75', height='75')
     br
