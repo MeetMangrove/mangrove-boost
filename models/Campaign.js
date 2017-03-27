@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
 const campaignSchema = new mongoose.Schema({
-  _id: { type: String, unique: true },
   name: String,
   link: String,
   content: String,
@@ -12,7 +11,7 @@ const campaignSchema = new mongoose.Schema({
 campaignSchema.pre('save', function save(next) {
   const campaign = this;
   if(!campaign._id){
-    campaign._id = new mongoose.mongo.ObjectId('26cb91bdc3464f14678934ca');
+  //  campaign._id = new mongoose.Types.ObjectId;
   }
   next();
 });
