@@ -1,21 +1,20 @@
 const Campaign = require('../models/Campaign');
 
-
-
 /**
  * GET /campaign/all
  * History of all campaign
  */
 exports.all = (req, res) => {
   var campaigns = [];
-  Campaign.find((err, results) => {
-    campaigns = results;
+  Campaign.find({}, (err, results) => {
+    if (err) { return next(err); }
+
+    res.render('campaign/all', {
+      title: 'History off campaign',
+      campaigns : results
+    });
   });
 
-  res.render('campaign/all', {
-    title: 'History off campaign',
-    campaigns : campaigns
-  });
 };
 
 /**
@@ -27,6 +26,21 @@ exports.all = (req, res) => {
     title: 'Campaign editor'
   });
  };
+
+ /**
+  * GET /campaign/view/:id
+  * Campaign Page
+  */
+  exports.view = (req, res) => {
+    Campaign.findOne({_id: req.params.id}, (err, result) => {
+      if (err) { return next(err); }
+      res.render('campaign/view', {
+        title: 'Campaign '+result.name,
+        campaign: result
+      });
+     });
+  };
+
 
  /**
   * POST /campaign/edit
@@ -42,11 +56,6 @@ exports.all = (req, res) => {
 
    campaign.save((err) => {
      if (err) { return next(err); }
-     req.logIn(campaign, (err) => {
-       if (err) {
-         return next(err);
-       }
-       res.redirect('/campaign/view/campaign');
-     });
+     res.redirect('/campaign/view/'+campaign._id);
    });
  };

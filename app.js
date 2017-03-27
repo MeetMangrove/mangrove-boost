@@ -129,6 +129,7 @@ app.get('/campaign/all', passportConfig.isAdmin, campaignController.all);
 app.get('/campaign/edit/', passportConfig.isAdmin, campaignController.edit);
 app.get('/campaign/edit/:id', passportConfig.isAdmin, campaignController.edit);
 app.post('/campaign/edit/', passportConfig.isAdmin, campaignController.postCampaign);
+app.get('/campaign/view/:id', passportConfig.isAdmin, campaignController.view);
 
 app.get('/login', userController.getLogin);
 app.post('/login', userController.postLogin);

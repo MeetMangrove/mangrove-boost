@@ -7,9 +7,10 @@ block content
         H1 Campaign
         br
         a.btn.primary-btn(href='/campaign/edit', role='button') Create new campaign
+        br
         .row.justify-content-md-center
           .col-md-6.col-md-offset-3
             ul
               for campaign in campaigns
                 li
-                  a(href='/campaign/view/campaign.id') #{campaign.name}
+                  a(href='/campaign/view/'+campaign._id) #{campaign.name}

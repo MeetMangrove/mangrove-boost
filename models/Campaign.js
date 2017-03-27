@@ -14,6 +14,7 @@ campaignSchema.pre('save', function save(next) {
   if(!campaign._id){
     campaign._id = new mongoose.mongo.ObjectId('26cb91bdc3464f14678934ca');
   }
+  next();
 });
 
 const Campaign = mongoose.model('Campaign', campaignSchema);
