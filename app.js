@@ -36,6 +36,7 @@ const apiController = require('./controllers/api');
 const contactController = require('./controllers/contact');
 const onboardingController = require('./controllers/onboarding');
 const campaignController = require('./controllers/campaign');
+const botController = require('./controllers/bot');
 
 /**
  * API keys and Passport configuration.
@@ -89,7 +90,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 app.use((req, res, next) => {
-  if (req.path === '/api/upload') {
+  if ((req.path === '/api/upload') || (req.path === '/bot'))  {
     next();
   } else {
     lusca.csrf()(req, res, next);
@@ -127,6 +128,10 @@ app.get('/onboarding/step3', passportConfig.isAuthenticated, onboardingControlle
 
 app.get('/campaign/all', passportConfig.isAdmin, campaignController.all);
 app.get('/campaign/edit/:id', passportConfig.isAdmin, campaignController.edit);
+
+app.post('/bot', (req, res) => {
+  botController.handler(req, res);
+});
 
 app.get('/login', userController.getLogin);
 app.post('/login', userController.postLogin);
@@ -170,6 +175,7 @@ app.get('/auth/slack', passport.authenticate('slack'));
 app.get('/auth/slack/callback', passport.authenticate('slack', { failureRedirect: '/onboarding/step1' }), (req, res) => {
   res.redirect('/onboarding/step2');
 });
+
 
 
 /**

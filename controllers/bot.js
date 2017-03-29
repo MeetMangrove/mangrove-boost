@@ -4,11 +4,7 @@ const dotenv = require('dotenv');
 
 dotenv.load({ path: '.env' });
 
-
 const controller = Botkit.slackbot({
-  incoming_webhook: {
-    url: 'https://hooks.slack.com/services/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'
-  }
 });
 
 const bot = controller.spawn({
@@ -18,55 +14,55 @@ const bot = controller.spawn({
   }
 }).startRTM();
 
+function handler(req, res) {
+  console.log('loggi,ng');
+  return res.sendStatus(200);
+}
+
+const campaignMessage = {
+    "text": "<https://mangrove-boost.herokuapp.com|A new campaign> is starting. Do you want to support it?",
+    "attachments": [
+        {
+            "text": "Choose an answer",
+            "fallback": "You are unable to support the campaign",
+            "callback_id": "new_campaign",
+            "color": "#3AA3E3",
+            "attachment_type": "default",
+            "actions": [
+                {
+                    "name": "yes",
+          "style": "primary",
+                    "text": "Yes",
+                    "type": "button",
+                    "value": "yes"
+                },
+        {
+                    "name": "No",
+                    "text": "No",
+                    "style": "danger",
+                    "type": "button",
+                    "value": "no",
+                    "confirm": {
+                        "title": "Are you sure?",
+                        "text": "Wouldn't you prefer to support it?",
+                        "ok_text": "Yes",
+                        "dismiss_text": "No"
+                    }
+                }
+            ]
+        }
+    ],
+    "replace_original": "true",
+    "response_type": "ephemeral"
+}
+
+
 controller.on('direct_message,direct_mention,mention', (bot, message) => {
-  bot.sendWebhook({
-    text: 'Ce bot va casser des culs',
-    channel: '#mangrove-boost',
-    username: 'booster',
-    icon_emoji: ':zap:',
-  }, (err, res) => {
+  bot.sendWebhook(campaignMessage, (err, res) => {
     if (err) {
-      // ...
+      console.log(err);
     }
   });
-  console.log('message:', message);
-  // start a conversation to handle this response.
-  // bot.startConversation(message, (err, convo) => {
-  //   convo.say('Hey dude!');
-  //   convo.ask({
-  //     attachments: [
-  //       {
-  //         title: 'Wanna support the next campaign?',
-  //         callback_id: '123',
-  //         attachment_type: 'default',
-  //         actions: [
-  //           {
-  //             "name":"yes",
-  //             "text": "Yes",
-  //             "value": "yes",
-  //             "type": "button",
-  //           },
-  //           {
-  //             "name":"no",
-  //             "text": "No",
-  //             "value": "no",
-  //             "type": "button",
-  //           }
-  //         ]
-  //       }
-  //     ]
-  //   });
-  // });
 });
 
-
-// EXAMPLE MESSAGE
-// message: { type: 'message',
-//   channel: 'D4PMUAB0C',
-//   user: 'U0QKVT0HF',
-//   text: 'Hello',
-//   ts: '1490624192.494859',
-//   source_team: 'T0QJH8NJK',
-//   team: 'T0QJH8NJK',
-//   event: 'direct_message',
-//   match: [ 'Hello', index: 0, input: 'Hello' ] }
+exports.handler = handler;
