@@ -15,8 +15,20 @@ const bot = controller.spawn({
 }).startRTM();
 
 function handler(req, res) {
-  console.log('loggi,ng');
-  return res.sendStatus(200);
+  const payload = JSON.parse(req.body.payload);
+  if ((payload) && (payload.callback_id === 'new_campaign')) {
+    if (payload.actions[0].name === 'yes') {
+      return res.send('You clicked yes');
+    } else if (payload.actions[0].name === 'No') {
+      return res.send('You clicked no');
+    }
+    return res.send('Sorry I, didn\'t get that');
+  }
+}
+
+function addBackerToCampaign(slackUserId, campaignId) {
+  // Find related campaign
+  // Add user id to list of subscribers
 }
 
 const campaignMessage = {
@@ -30,32 +42,25 @@ const campaignMessage = {
             "attachment_type": "default",
             "actions": [
                 {
-                    "name": "yes",
-          "style": "primary",
-                    "text": "Yes",
-                    "type": "button",
-                    "value": "yes"
+                  "name": "yes",
+                  "style": "primary",
+                  "text": "Yes",
+                  "type": "button",
+                  "value": "yes"
                 },
-        {
-                    "name": "No",
-                    "text": "No",
-                    "style": "danger",
-                    "type": "button",
-                    "value": "no",
-                    "confirm": {
-                        "title": "Are you sure?",
-                        "text": "Wouldn't you prefer to support it?",
-                        "ok_text": "Yes",
-                        "dismiss_text": "No"
-                    }
+                {
+                  "name": "No",
+                  "text": "No",
+                  "style": "danger",
+                  "type": "button",
+                  "value": "no"
                 }
             ]
         }
     ],
     "replace_original": "true",
     "response_type": "ephemeral"
-}
-
+};
 
 controller.on('direct_message,direct_mention,mention', (bot, message) => {
   bot.sendWebhook(campaignMessage, (err, res) => {
