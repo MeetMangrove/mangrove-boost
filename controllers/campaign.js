@@ -1,4 +1,5 @@
 const Campaign = require('../models/Campaign');
+const Bot = require('./bot');
 
 /**
  * GET /campaign/all
@@ -56,6 +57,7 @@ exports.all = (req, res) => {
 
    campaign.save((err) => {
      if (err) { return next(err); }
+     Bot.sendStartCampaign();
      res.redirect('/campaign/view/'+campaign._id);
    });
  };

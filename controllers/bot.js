@@ -59,7 +59,11 @@ const campaignMessage = {
         }
     ],
     "replace_original": "true",
-    "response_type": "ephemeral"
+    "response_type": "ephemeral",
+    'parse' : 'full',
+    'username': 'Bitch bot' ,
+    'icon_url': 'https://media.giphy.com/media/LhVGZXspUHbhK/giphy.gif',
+    'channel': '#mangrove-boost'
 };
 
 controller.on('direct_message,direct_mention,mention', (bot, message) => {
@@ -69,5 +73,13 @@ controller.on('direct_message,direct_mention,mention', (bot, message) => {
     }
   });
 });
+
+
+
+exports.sendStartCampaign = () => {
+  bot.startPrivateConversation({user: 'U110CED2T'}, function(res, convo){
+    convo.say("Coucou");
+  });
+};
 
 exports.handler = handler;
