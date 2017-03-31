@@ -5,12 +5,12 @@ const campaignSchema = new mongoose.Schema({
   link: String,
   content: String,
   date_release: Date,
-  profiles: Array
+  backers: Array
 }, { timestamps: true });
 
 campaignSchema.pre('save', function save(next) {
   const campaign = this;
-  if(!campaign._id){
+  if (!campaign._id) {
   //  campaign._id = new mongoose.Types.ObjectId;
   }
   next();
