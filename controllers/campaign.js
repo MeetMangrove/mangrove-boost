@@ -1,7 +1,6 @@
 const Campaign = require('../models/Campaign');
 const User = require('../models/User');
 const Bot = require('./bot');
-const User = require('../models/User');
 
 /**
  * GET /campaign/all
@@ -17,96 +16,97 @@ exports.all = (req, res) => {
       campaigns: results
     });
   });
-
 };
 
 /**
- * GET /campaign/edit/:id
- * Campaign Editor
- */
- exports.edit = (req, res) => {
+* GET /campaign/edit/:id
+* Campaign Editor
+*/
+exports.edit = (req, res) => {
   res.render('campaign/edit', {
     title: 'Campaign editor'
   });
- };
+};
 
  /**
   * GET /campaign/view/:id
   * Campaign Page
   */
-  exports.view = (req, res) => {
-    Campaign.findOne({_id: req.params.id}, (err, result) => {
-      if (err) { return next(err); }
-      res.render('campaign/view', {
-        title: 'Campaign '+result.name,
-        campaign: result
-      });
-     });
-  };
+exports.view = (req, res) => {
+  Campaign.findOne({ _id: req.params.id }, (err, result) => {
+    if (err) { return next(err); }
+    res.render('campaign/view', {
+      title: 'Campaign ' + result.name,
+      campaign: result
+    });
+  });
+};
 
 
  /**
   * POST /campaign/edit
   * Create a new local account.
   */
- exports.postCampaign = (req, res, next) => {
+exports.postCampaign = (req, res, next) => {
   const campaign = new Campaign({
     name: req.body.name,
     link: req.body.link,
     content: req.body.content,
     date_release: req.body.date_release
-   });
+  });
 
-   campaign.save((err) => {
-     if (err) { return next(err); }
-     Bot.sendStartCampaign();
-     res.redirect('/campaign/view/'+campaign._id);
-   });
- };
+  campaign.save((err) => {
+    if (err) { return next(err); }
+    Bot.sendStartCampaign();
+    res.redirect('/campaign/view/' + campaign._id);
+  });
+};
 
 
-
-exports.addBackerToCampaign = (slackId, campaignId) => {
+exports.addBackerToCampaign = (slackId, campaignName) => {
   User.findOne({ slack: slackId }, (err, user) => {
     if (err) {
       console.log(err);
       return err;
     }
     Campaign.findOneAndUpdate(
-      { _id: campaignId },
+      { name: campaignName },
       { $push: { backers: user._id } },
       { new: true }, (err, campaign) => {
         if (err) {
           console.log(err);
           return err;
+        } else if (campaign) {
+          console.log(`${user.profile.name} added to ${campaign.name}`);
+        } else {
+          console.log('An error ocured');
         }
-        console.log(`${user.slack} added to ${campaign}`);
       });
   });
-}
+};
 
- exports.postTwitter = (userId, campaignId) => {
-   campaign = Campaign.findOne({_id: campaignId}, (err, campaign) => {
-     if (err) { return next(err); }
-     return campaign;
-   });
+exports.postTwitter = (userId, campaignId) => {
+  const campaign = Campaign.findOne({ _id: campaignId }, (err, campaign) => {
+    if (err) { return next(err); }
+    return campaign;
+  });
 
-   user = User.findOne({_id: userId}, (err, user) => {
-     if (err) { return next(err); }
-     return user;
-   });
+  const user = User.findOne({ _id: userId }, (err, user) => {
+    if (err) { return next(err); }
+    return user;
+  });
 
-   const token = user.tokens.find(token => token.kind === 'twitter');
-   const T = new Twit({
-     consumer_key: process.env.TWITTER_KEY,
-     consumer_secret: process.env.TWITTER_SECRET,
-     access_token: token.accessToken,
-     access_token_secret: token.tokenSecret
-   });
+  const token = user.tokens.find(token => token.kind === 'twitter');
+  const T = new Twit({
+    consumer_key: process.env.TWITTER_KEY,
+    consumer_secret: process.env.TWITTER_SECRET,
+    access_token: token.accessToken,
+    access_token_secret: token.tokenSecret
+  });
 
-   T.post('statuses/update', { status: campaign.message_to_share }, (err) => {
-     if (err) { return next(err); }
-     console.log("Tweet posté");
-   });
- };
+  T.post('statuses/update', { status: campaign.message_to_share }, (err) => {
+    if (err) { return next(err); }
+    console.log('Tweet posté');
+  });
+};
 

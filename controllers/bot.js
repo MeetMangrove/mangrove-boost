@@ -1,4 +1,4 @@
-
+const campaignsController = require('./campaign');
 const Botkit = require('botkit');
 const dotenv = require('dotenv');
 
@@ -14,11 +14,15 @@ const bot = controller.spawn({
   }
 }).startRTM();
 
+// All incoming messages go through here
 function handler(req, res) {
   const payload = JSON.parse(req.body.payload);
-  if ((payload) && (payload.callback_id === 'new_campaign')) {
+  const callbackId = payload.callback_id;
+  const slack = payload.user;
+  if ((payload) && (payload.callback_id === 'Antonin')) {
     if (payload.actions[0].name === 'yes') {
-      return res.send('You clicked yes');
+      campaignsController.addBackerToCampaign(slack.id, callbackId);
+      return res.send(`Sweet ${slack.name}, let's make it buzz!`);
     } else if (payload.actions[0].name === 'No') {
       return res.send('You clicked no');
     }
@@ -26,48 +30,50 @@ function handler(req, res) {
   }
 }
 
-const campaignMessage = {
-    "text": "A new campaign is starting. Do you want to support it?",
-    "attachments": [
-      {
-        "text": "Choose an answer",
-        "fallback": "You are unable to support the campaign",
-        "callback_id": "new_campaign",
-        "color": "#3AA3E3",
-        "attachment_type": "default",
-        "actions": [
-          {
-            "name": "yes",
-            "style": "primary",
-            "text": "Yes",
-            "type": "button",
-            "value": "yes"
-          },
-          {
-            "name": "No",
-            "text": "No",
-            "style": "danger",
-            "type": "button",
-            "value": "no"
-          }
-        ]
-      }
-    ],
-    "replace_original": "true",
-    "response_type": "ephemeral",
-};
+function formatNewCampaignMessage(campaignName, cb) {
+  const newCampaignMessage = {
+      "text": "A new campaign is starting. Do you want to support it?",
+      "attachments": [
+        {
+          "text": "Choose an answer",
+          "fallback": "You are unable to support the campaign",
+          "callback_id": campaignName,
+          "color": "#3AA3E3",
+          "attachment_type": "default",
+          "actions": [
+            {
+              "name": "yes",
+              "style": "primary",
+              "text": "Yes",
+              "type": "button",
+              "value": "yes"
+            },
+            {
+              "name": "No",
+              "text": "No",
+              "style": "danger",
+              "type": "button",
+              "value": "no"
+            }
+          ]
+        }
+      ],
+      "response_type": "ephemeral",
+  };
+  return cb(newCampaignMessage);
+}
+
+function sendStartCampaign(campaignName) {
+  formatNewCampaignMessage(campaignName, (newCampaignMessage) => {
+    bot.startPrivateConversation({ user: process.env.ANTONIN_ID }, (responseMessage, convo) => {
+      convo.say(newCampaignMessage);
+    });
+  });
+}
 
 controller.on('direct_message', (bot, message) => {
-  bot.startPrivateConversation({ user: process.env.ANTONIN_ID }, (res, convo) => {
-    convo.say(campaignMessage);
-  });
+  sendStartCampaign('Antonin');
 });
 
-
-exports.sendStartCampaign = () => {
-  bot.startPrivateConversation({ user: process.env.ANTONIN_ID }, (res, convo) => {
-    convo.say();
-  });
-};
-
 exports.handler = handler;
+exports.sendStartCampaign = sendStartCampaign;
