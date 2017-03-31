@@ -1,4 +1,5 @@
 const Campaign = require('../models/Campaign');
+const User = require('../models/User');
 const Bot = require('./bot');
 
 /**
@@ -59,5 +60,31 @@ exports.all = (req, res) => {
      if (err) { return next(err); }
      Bot.sendStartCampaign();
      res.redirect('/campaign/view/'+campaign._id);
+   });
+ };
+
+
+ exports.postTwitter = (userId, campaignId) => {
+   campaign = Campaign.findOne({_id: campaignId}, (err, campaign) => {
+     if (err) { return next(err); }
+     return campaign;
+   });
+
+   user = User.findOne({_id: userId}, (err, user) => {
+     if (err) { return next(err); }
+     return user;
+   });
+
+   const token = user.tokens.find(token => token.kind === 'twitter');
+   const T = new Twit({
+     consumer_key: process.env.TWITTER_KEY,
+     consumer_secret: process.env.TWITTER_SECRET,
+     access_token: token.accessToken,
+     access_token_secret: token.tokenSecret
+   });
+
+   T.post('statuses/update', { status: campaign.message_to_share }, (err) => {
+     if (err) { return next(err); }
+     console.log("Tweet posté");
    });
  };
