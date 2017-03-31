@@ -1,7 +1,11 @@
+'use strict';
+
+const bluebird = require('bluebird');
+const request = bluebird.promisifyAll(require('request'), { multiArgs: true });
 const Campaign = require('../models/Campaign');
 const User = require('../models/User');
-const Bot = require('./bot');
-const User = require('../models/User');
+const Bot = bluebird.promisifyAll(require('./bot'), { multiArgs: true });
+
 
 /**
  * GET /campaign/all
@@ -37,6 +41,9 @@ exports.all = (req, res) => {
   exports.view = (req, res) => {
     Campaign.findOne({_id: req.params.id}, (err, result) => {
       if (err) { return next(err); }
+
+      this.getSlackUsers(result);
+
       res.render('campaign/view', {
         title: 'Campaign '+result.name,
         campaign: result
@@ -52,21 +59,24 @@ exports.all = (req, res) => {
  exports.postCampaign = (req, res, next) => {
   const campaign = new Campaign({
     name: req.body.name,
-    link: req.body.link,
-    content: req.body.content,
+    message_to_share: req.body.message_to_share,
+    message_backers: req.body.message_backers,
     date_release: req.body.date_release
    });
 
    campaign.save((err) => {
      if (err) { return next(err); }
-     Bot.sendStartCampaign();
-     res.redirect('/campaign/view/'+campaign._id);
+     this.getSlackUsers(campaign).then(function(p) {
+       Bot.sendStartCampaign().then(function(r){
+         res.redirect('/campaign/view/'+campaign._id);
+       });
+     });
    });
  };
 
 
 
-exports.addBackerToCampaign = (slackId, campaignId) => {
+exports.addAuthBackerToCampaign = (slackId, campaignId) => {
   User.findOne({ slack: slackId }, (err, user) => {
     if (err) {
       console.log(err);
@@ -84,6 +94,33 @@ exports.addBackerToCampaign = (slackId, campaignId) => {
       });
   });
 }
+
+
+/**
+ * Get All Slack users
+ */
+exports.getSlackUsers = (campaign) => {
+  return new Promise(function (resolve, reject) {
+    const token = process.env.SLACK_TOKEN;
+    request.get({ url: 'https://slack.com/api/users.list', qs: { token: token }, json: true }, (err, request, body) => {
+      if (err) { return next(err); }
+      body.members.forEach(function(member){
+        campaign.backers.push({
+          user_slack_id: member.id,
+          auth_post: false
+        });
+      });
+
+      Campaign.update(
+        { _id: campaign._id},
+        { $set: {backers: campaign.backers}},
+        function(err) { return err; }
+      );
+    });
+    return;
+  });
+};
+
 
  exports.postTwitter = (userId, campaignId) => {
    campaign = Campaign.findOne({_id: campaignId}, (err, campaign) => {
@@ -109,4 +146,3 @@ exports.addBackerToCampaign = (slackId, campaignId) => {
      console.log("Tweet posté");
    });
  };
-

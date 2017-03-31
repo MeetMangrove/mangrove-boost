@@ -18,6 +18,7 @@ function handler(req, res) {
   const payload = JSON.parse(req.body.payload);
   if ((payload) && (payload.callback_id === 'new_campaign')) {
     if (payload.actions[0].name === 'yes') {
+      console.log(req.body);
       return res.send('You clicked yes');
     } else if (payload.actions[0].name === 'No') {
       return res.send('You clicked no');
@@ -64,9 +65,15 @@ controller.on('direct_message', (bot, message) => {
 });
 
 
-exports.sendStartCampaign = () => {
-  bot.startPrivateConversation({ user: process.env.ANTONIN_ID }, (res, convo) => {
-    convo.say();
+exports.sendStartCampaign = (campaign) => {
+  console.log(campaign);
+  campaign.backers.forEach(function(backer){
+    console.log(backer.user_slack_id);
+    if(backer.user_slack_id !== 'U110CED2T'){ return; }
+
+    bot.startPrivateConversation({ user: backer.user_slack_id }, (res, convo) => {
+      convo.say(campaignMessage);
+    });
   });
 };
 

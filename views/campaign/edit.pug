@@ -13,13 +13,13 @@ block content
                 .col-sm-7
                   input.form-control(type='text', name='name', id='name', placeholder='Name of Campaign', autofocus, required)
               .form-group
-                label.col-sm-3.control-label(for='link') Link
+                label.col-sm-3.control-label(for='message_backers') Message for backers
                 .col-sm-7
-                  input.form-control(type='url', name='link', id='link', placeholder='Link you want to share', required)
+                  textarea.form-control(name='message_backers', id='message_backers', placeholder='Message you want to share', required)
               .form-group
-                label.col-sm-3.justify-content-md-center.control-label(for='content') Content
+                label.col-sm-3.justify-content-md-center.control-label(for='message_to_share') Message to share
                 .col-md-7
-                  textarea.form-control(name='content', id='content', placeholder='Content you want to share', required)
+                  textarea.form-control(name='message_to_share', id='message_to_share', placeholder='Content you want to share', required)
               .form-group
                 label.col-sm-3.control-label(for='date_release') Date
                 .col-sm-7
