@@ -132,6 +132,7 @@ app.get('/campaign/edit/:id', passportConfig.isAdmin, campaignController.edit);
 app.post('/campaign/edit/', passportConfig.isAdmin, campaignController.postCampaign);
 app.get('/campaign/view/:id', passportConfig.isAdmin, campaignController.view);
 
+// SLACKBOT
 app.post('/bot', (req, res) => {
   botController.handler(req, res);
 });
