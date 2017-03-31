@@ -58,14 +58,14 @@ const campaignMessage = {
 };
 
 controller.on('direct_message', (bot, message) => {
-  bot.startPrivateConversation({ user: 'U110CED2T' }, (res, convo) => {
+  bot.startPrivateConversation({ user: process.env.ANTONIN_ID }, (res, convo) => {
     convo.say(campaignMessage);
   });
 });
 
 
 exports.sendStartCampaign = () => {
-  bot.startPrivateConversation({user: 'U110CED2T'}, function(res, convo){
+  bot.startPrivateConversation({ user: process.env.ANTONIN_ID }, (res, convo) => {
     convo.say();
   });
 };

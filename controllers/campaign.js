@@ -64,7 +64,7 @@ exports.all = (req, res) => {
  };
 
 
-function addBackerToCampaign(slackId, campaignId) {
+exports.addBackerToCampaign = (slackId, campaignId) => {
   User.findOne({ slack: slackId }, (err, user) => {
     if (err) {
       console.log(err);
