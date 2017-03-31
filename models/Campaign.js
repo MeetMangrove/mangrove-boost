@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 
 const campaignSchema = new mongoose.Schema({
   name: String,
-  link: String,
-  content: String,
+  message_to_share: String,
+  message_backers: String,
   date_release: Date,
   backers: Array
 }, { timestamps: true });
