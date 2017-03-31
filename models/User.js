@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema({
  */
 userSchema.pre('save', function save(next) {
   const user = this;
-  user.role = "admin";
+  user.role = 'admin';
   if (!user.isModified('password')) { return next(); }
   bcrypt.genSalt(10, (err, salt) => {
     if (err) { return next(err); }

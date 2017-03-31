@@ -1,19 +1,20 @@
 const Campaign = require('../models/Campaign');
 const User = require('../models/User');
 const Bot = require('./bot');
+const User = require('../models/User');
 
 /**
  * GET /campaign/all
  * History of all campaign
  */
 exports.all = (req, res) => {
-  var campaigns = [];
+  let campaigns = [];
   Campaign.find({}, (err, results) => {
     if (err) { return next(err); }
 
     res.render('campaign/all', {
       title: 'History off campaign',
-      campaigns : results
+      campaigns: results
     });
   });
 
@@ -64,6 +65,26 @@ exports.all = (req, res) => {
  };
 
 
+
+exports.addBackerToCampaign = (slackId, campaignId) => {
+  User.findOne({ slack: slackId }, (err, user) => {
+    if (err) {
+      console.log(err);
+      return err;
+    }
+    Campaign.findOneAndUpdate(
+      { _id: campaignId },
+      { $push: { backers: user._id } },
+      { new: true }, (err, campaign) => {
+        if (err) {
+          console.log(err);
+          return err;
+        }
+        console.log(`${user.slack} added to ${campaign}`);
+      });
+  });
+}
+
  exports.postTwitter = (userId, campaignId) => {
    campaign = Campaign.findOne({_id: campaignId}, (err, campaign) => {
      if (err) { return next(err); }
@@ -88,3 +109,4 @@ exports.all = (req, res) => {
      console.log("Tweet posté");
    });
  };
+

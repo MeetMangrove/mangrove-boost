@@ -10,7 +10,7 @@ const campaignSchema = new mongoose.Schema({
 
 campaignSchema.pre('save', function save(next) {
   const campaign = this;
-  if(!campaign._id){
+  if (!campaign._id) {
   //  campaign._id = new mongoose.Types.ObjectId;
   }
   next();

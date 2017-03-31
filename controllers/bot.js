@@ -26,59 +26,47 @@ function handler(req, res) {
   }
 }
 
-function addBackerToCampaign(slackUserId, campaignId) {
-  // Find related campaign
-  // Add user id to list of subscribers
-}
-
 const campaignMessage = {
-    "text": "<https://mangrove-boost.herokuapp.com|A new campaign> is starting. Do you want to support it?",
+    "text": "A new campaign is starting. Do you want to support it?",
     "attachments": [
-        {
-            "text": "Choose an answer",
-            "fallback": "You are unable to support the campaign",
-            "callback_id": "new_campaign",
-            "color": "#3AA3E3",
-            "attachment_type": "default",
-            "actions": [
-                {
-                  "name": "yes",
-                  "style": "primary",
-                  "text": "Yes",
-                  "type": "button",
-                  "value": "yes"
-                },
-                {
-                  "name": "No",
-                  "text": "No",
-                  "style": "danger",
-                  "type": "button",
-                  "value": "no"
-                }
-            ]
-        }
+      {
+        "text": "Choose an answer",
+        "fallback": "You are unable to support the campaign",
+        "callback_id": "new_campaign",
+        "color": "#3AA3E3",
+        "attachment_type": "default",
+        "actions": [
+          {
+            "name": "yes",
+            "style": "primary",
+            "text": "Yes",
+            "type": "button",
+            "value": "yes"
+          },
+          {
+            "name": "No",
+            "text": "No",
+            "style": "danger",
+            "type": "button",
+            "value": "no"
+          }
+        ]
+      }
     ],
     "replace_original": "true",
     "response_type": "ephemeral",
-    'parse' : 'full',
-    'username': 'Bitch bot' ,
-    'icon_url': 'https://media.giphy.com/media/LhVGZXspUHbhK/giphy.gif',
-    'channel': '#mangrove-boost'
 };
 
-controller.on('direct_message,direct_mention,mention', (bot, message) => {
-  bot.sendWebhook(campaignMessage, (err, res) => {
-    if (err) {
-      console.log(err);
-    }
+controller.on('direct_message', (bot, message) => {
+  bot.startPrivateConversation({ user: process.env.ANTONIN_ID }, (res, convo) => {
+    convo.say(campaignMessage);
   });
 });
 
 
-
 exports.sendStartCampaign = () => {
-  bot.startPrivateConversation({user: 'U110CED2T'}, function(res, convo){
-    convo.say("Coucou");
+  bot.startPrivateConversation({ user: process.env.ANTONIN_ID }, (res, convo) => {
+    convo.say();
   });
 };
 
