@@ -46,8 +46,6 @@ exports.view = (req, res) => {
   Campaign.findOne({ _id: req.params.id }, (err, result) => {
     if (err) { return next(err); }
 
-    // this.addBackersToCampaign(result); REMOVING IT BECAUSE NOT SURE WHY ITS HERE AND BREAKS THE APP(no function)
-
     res.render('campaign/view', {
       title: 'Campaign ' + result.name,
       campaign: result
@@ -98,9 +96,8 @@ exports.postCampaign = (req, res, next) => {
   });
 
   campaign.save((err) => {
-    if (err) {
-      return (err);
-    }
+    if (err) { return (err); }
+
     getSlackUsers((slackUsers) => {
       formatBackers(slackUsers, (backers) => {
         Campaign.findOneAndUpdate(
@@ -108,9 +105,8 @@ exports.postCampaign = (req, res, next) => {
           { $set: { backers: backers } },
           { new: true },
           (err, updatedCampaign) => {
-            if (err) {
-              return (err);
-            }
+            if (err) { return (err); }
+            
             console.log('sending campain', updatedCampaign.backers);
             Bot.sendStartCampaign(updatedCampaign);
             res.redirect('/campaign/view/' + updatedCampaign._id);
