@@ -10,8 +10,6 @@ const Bot = bluebird.promisifyAll(require('./bot'), { multiArgs: true });
 
 
 
-
-
 /**
  * GET /campaign/all
  * History of all campaign
@@ -29,9 +27,9 @@ exports.all = (req, res) => {
 };
 
 /**
- * GET /campaign/edit/:id
- * Campaign Editor
- */
+* GET /campaign/edit/:id
+* Campaign Editor
+*/
 exports.edit = (req, res) => {
   res.render('campaign/edit', {
     title: 'Campaign editor'
@@ -106,7 +104,7 @@ exports.postCampaign = (req, res, next) => {
           { new: true },
           (err, updatedCampaign) => {
             if (err) { return (err); }
-            
+
             console.log('sending campain', updatedCampaign.backers);
             Bot.sendStartCampaign(updatedCampaign);
             res.redirect('/campaign/view/' + updatedCampaign._id);
@@ -117,6 +115,7 @@ exports.postCampaign = (req, res, next) => {
   });
 };
 
+
 exports.addAuthBackerToCampaign = (slackId, campaignId) => {
   User.findOne({ slack: slackId }, (err, user) => {
     if (err) {
@@ -124,17 +123,21 @@ exports.addAuthBackerToCampaign = (slackId, campaignId) => {
       return err;
     }
     Campaign.findOneAndUpdate(
-      { _id: campaignId },
+      { name: campaignName },
       { $push: { backers: user._id } },
       { new: true }, (err, campaign) => {
         if (err) {
           console.log(err);
           return err;
+        } else if (campaign) {
+          console.log(`${user.profile.name} added to ${campaign.name}`);
+        } else {
+          console.log('An error ocured');
         }
-        console.log(`${user.slack} added to ${campaign}`);
       });
   });
 };
+
 
 exports.postTwitter = (userId, campaignId) => {
   const campaign = Campaign.findOne({ _id: campaignId }, (err, campaign) => {
@@ -146,6 +149,7 @@ exports.postTwitter = (userId, campaignId) => {
     if (err) { return next(err); }
     return user;
   });
+
 
   const token = user.tokens.find(token => token.kind === 'twitter');
   const T = new Twit({
