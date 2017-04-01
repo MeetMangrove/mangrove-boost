@@ -67,9 +67,8 @@ exports.all = (req, res) => {
    campaign.save((err) => {
      if (err) { return next(err); }
      this.getSlackUsers(campaign).then(function(p) {
-       Bot.sendStartCampaign().then(function(r){
-         res.redirect('/campaign/view/'+campaign._id);
-       });
+       Bot.sendStartCampaign();
+       res.redirect('/campaign/view/'+campaign._id);
      });
    });
  };
@@ -117,7 +116,7 @@ exports.getSlackUsers = (campaign) => {
         function(err) { return err; }
       );
     });
-    return;
+    resolve(campaign);
   });
 };
 
