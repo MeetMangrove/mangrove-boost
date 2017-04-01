@@ -59,17 +59,17 @@ const campaignMessage = {
 };
 
 controller.on('direct_message', (bot, message) => {
-  bot.startPrivateConversation({ user: process.env.ANTONIN_ID }, (res, convo) => {
+  bot.startPrivateConversation({ user: process.env.SLACK_USER_ID }, (res, convo) => {
     convo.say(campaignMessage);
   });
 });
 
-
 exports.sendStartCampaign = (campaign) => {
-  console.log(campaign);
-  campaign.backers.forEach(function(backer){
-    console.log(backer.user_slack_id);
-    if(backer.user_slack_id !== 'U110CED2T'){ return; }
+  // console.log('BACKERS', campaign.backers);
+  campaign.backers.forEach((backer) => {
+    if (backer.user_slack_id !== process.env.SLACK_USER_ID) {
+      return;
+    }
 
     bot.startPrivateConversation({ user: backer.user_slack_id }, (res, convo) => {
       convo.say(campaignMessage);
