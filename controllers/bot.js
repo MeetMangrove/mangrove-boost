@@ -31,14 +31,14 @@ function handler(req, res) {
   }
 }
 
-function formatNewCampaignMessage(campaignId, cb) {
+function formatNewCampaignMessage(campaign, cb) {
   const newCampaignMessage = {
-      "text": "A new campaign is starting. Do you want to support it?",
+      "text": `New buzz starting: ⚡️${campaign.name}⚡️\n ${campaign.message_backers}`,
       "attachments": [
         {
-          "text": "Choose an answer",
+          "text": "Want to help the buzz?",
           "fallback": "You are unable to support the campaign",
-          "callback_id": campaignId,
+          "callback_id": campaign._id,
           "color": "#3AA3E3",
           "attachment_type": "default",
           "actions": [
@@ -77,7 +77,7 @@ function sendStartCampaign(campaign) {
       return;
     }
     bot.startPrivateConversation({ user: backer.user_slack_id }, (res, convo) => {
-      formatNewCampaignMessage(campaign._id, (campaignMessage) => {
+      formatNewCampaignMessage(campaign, (campaignMessage) => {
         convo.say(campaignMessage);
       });
     });
