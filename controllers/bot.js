@@ -17,12 +17,13 @@ const bot = controller.spawn({
 // All incoming messages go through here
 function handler(req, res) {
   const payload = JSON.parse(req.body.payload);
-  const callbackId = payload.callback_id;
   const slack = payload.user;
-  if ((payload) && (payload.callback_id === 'Antonin')) {
+  console.log(slack);
+  if ((payload) && (payload.callback_id)) {
     if (payload.actions[0].name === 'yes') {
-      campaignsController.addBackerToCampaign(slack.id, callbackId);
-      return res.send(`Sweet ${slack.name}, let's make it buzz!`);
+      // Prepare the tweet
+      campaignsController.postTwitter(slack.id, payload.callback_id);
+      return res.send(`Sweet ${slack.name}, let's make ${payload.callback_id} buzz!`);
     } else if (payload.actions[0].name === 'No') {
       return res.send('You clicked no');
     }
@@ -30,14 +31,14 @@ function handler(req, res) {
   }
 }
 
-function formatNewCampaignMessage(campaignName, cb) {
+function formatNewCampaignMessage(campaignId, cb) {
   const newCampaignMessage = {
       "text": "A new campaign is starting. Do you want to support it?",
       "attachments": [
         {
           "text": "Choose an answer",
           "fallback": "You are unable to support the campaign",
-          "callback_id": campaignName,
+          "callback_id": campaignId,
           "color": "#3AA3E3",
           "attachment_type": "default",
           "actions": [
@@ -65,22 +66,23 @@ function formatNewCampaignMessage(campaignName, cb) {
 
 controller.on('direct_message', (bot, message) => {
   bot.startPrivateConversation({ user: process.env.SLACK_USER_ID }, (res, convo) => {
-    convo.say(campaignMessage);
+    convo.say(`I'll tell you when a new campaign starts.`);
   });
 });
 
-exports.sendStartCampaign = (campaign) => {
+function sendStartCampaign(campaign) {
   // console.log('BACKERS', campaign.backers);
   campaign.backers.forEach((backer) => {
     if (backer.user_slack_id !== process.env.SLACK_USER_ID) {
       return;
     }
-
     bot.startPrivateConversation({ user: backer.user_slack_id }, (res, convo) => {
-      convo.say(campaignMessage);
+      formatNewCampaignMessage(campaign._id, (campaignMessage) => {
+        convo.say(campaignMessage);
+      });
     });
   });
-};
+}
 
 
 exports.handler = handler;

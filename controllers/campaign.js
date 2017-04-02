@@ -1,14 +1,10 @@
 'use strict';
-
 const bluebird = require('bluebird');
 const request = bluebird.promisifyAll(require('request'), { multiArgs: true });
 const Campaign = require('../models/Campaign');
 const User = require('../models/User');
 const Bot = bluebird.promisifyAll(require('./bot'), { multiArgs: true });
-
-
-
-
+const Twit = require('twit');
 
 /**
  * GET /campaign/all
@@ -107,7 +103,7 @@ exports.postCampaign = (req, res, next) => {
 
             console.log('sending campain', updatedCampaign.backers);
             Bot.sendStartCampaign(updatedCampaign);
-            res.redirect('/campaign/view/' + updatedCampaign._id);
+            res.redirect(`/campaign/view/${updatedCampaign._id}`);
           }
         );
       });
@@ -116,51 +112,53 @@ exports.postCampaign = (req, res, next) => {
 };
 
 
-exports.addAuthBackerToCampaign = (slackId, campaignId) => {
-  User.findOne({ slack: slackId }, (err, user) => {
+// exports.addAuthBackerToCampaign = (slackId, campaignId) => {
+//   User.findOne({ slack: slackId }, (err, user) => {
+//     if (err) {
+//       console.log(err);
+//       return err;
+//     }
+//     Campaign.findOneAndUpdate(
+//       { name: campaignName },
+//       { $push: { backers: user._id } },
+//       { new: true }, (err, campaign) => {
+//         if (err) {
+//           console.log(err);
+//           return err;
+//         } else if (campaign) {
+//           console.log(`${user.profile.name} added to ${campaign.name}`);
+//         } else {
+//           console.log('An error ocured');
+//         }
+//       });
+//   });
+// };
+
+
+exports.postTwitter = (slackId, campaignId) => {
+  Campaign.findOne({ _id: campaignId }, (err, campaign) => {
     if (err) {
-      console.log(err);
-      return err;
+      return (err);
     }
-    Campaign.findOneAndUpdate(
-      { name: campaignName },
-      { $push: { backers: user._id } },
-      { new: true }, (err, campaign) => {
+    if (campaign) {
+      User.findOne({ slack: slackId }, (err, user) => {
         if (err) {
-          console.log(err);
-          return err;
-        } else if (campaign) {
-          console.log(`${user.profile.name} added to ${campaign.name}`);
-        } else {
-          console.log('An error ocured');
+          return (err);
         }
+        const token = user.tokens.find(token => token.kind === 'twitter');
+        const T = new Twit({
+          consumer_key: process.env.TWITTER_KEY,
+          consumer_secret: process.env.TWITTER_SECRET,
+          access_token: token.accessToken,
+          access_token_secret: token.tokenSecret
+        });
+        T.post('statuses/update', { status: campaign.message_to_share }, (err) => {
+          if (err) {
+            return (err);
+          }
+          console.log('Tweet posté');
+        });
       });
-  });
-};
-
-
-exports.postTwitter = (userId, campaignId) => {
-  const campaign = Campaign.findOne({ _id: campaignId }, (err, campaign) => {
-    if (err) { return next(err); }
-    return campaign;
-  });
-
-  const user = User.findOne({ _id: userId }, (err, user) => {
-    if (err) { return next(err); }
-    return user;
-  });
-
-
-  const token = user.tokens.find(token => token.kind === 'twitter');
-  const T = new Twit({
-    consumer_key: process.env.TWITTER_KEY,
-    consumer_secret: process.env.TWITTER_SECRET,
-    access_token: token.accessToken,
-    access_token_secret: token.tokenSecret
-  });
-
-  T.post('statuses/update', { status: campaign.message_to_share }, (err) => {
-    if (err) { return next(err); }
-    console.log("Tweet posté");
+    }
   });
 };
