@@ -112,28 +112,6 @@ exports.postCampaign = (req, res, next) => {
 };
 
 
-// exports.addAuthBackerToCampaign = (slackId, campaignId) => {
-//   User.findOne({ slack: slackId }, (err, user) => {
-//     if (err) {
-//       console.log(err);
-//       return err;
-//     }
-//     Campaign.findOneAndUpdate(
-//       { name: campaignName },
-//       { $push: { backers: user._id } },
-//       { new: true }, (err, campaign) => {
-//         if (err) {
-//           console.log(err);
-//           return err;
-//         } else if (campaign) {
-//           console.log(`${user.profile.name} added to ${campaign.name}`);
-//         } else {
-//           console.log('An error ocured');
-//         }
-//       });
-//   });
-// };
-
 
 exports.postTwitter = (slackId, campaignId) => {
   Campaign.findOne({ _id: campaignId }, (err, campaign) => {
@@ -162,3 +140,26 @@ exports.postTwitter = (slackId, campaignId) => {
     }
   });
 };
+
+
+// exports.addAuthBackerToCampaign = (slackId, campaignId) => {
+//   User.findOne({ slack: slackId }, (err, user) => {
+//     if (err) {
+//       console.log(err);
+//       return err;
+//     }
+//     Campaign.findOneAndUpdate(
+//       { name: campaignName },
+//       { $push: { backers: user._id } },
+//       { new: true }, (err, campaign) => {
+//         if (err) {
+//           console.log(err);
+//           return err;
+//         } else if (campaign) {
+//           console.log(`${user.profile.name} added to ${campaign.name}`);
+//         } else {
+//           console.log('An error ocured');
+//         }
+//       });
+//   });
+// };
