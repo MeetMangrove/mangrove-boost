@@ -16,34 +16,37 @@ const bot = controller.spawn({
 
 
 // JSON Messages with attachments
-const noMessage = {
-  "attachments": [
-    {
-      "text": '😥 Are you sure you don\'t want to help your friends at Mangrove?',
-      "fallback": "Too bad.",
-      "callback_id": "firstNo",
-      "color": "#3AA3E3",
-      "attachment_type": "default",
-      "actions": [
-        {
-          "name": "yes",
-          "style": "primary",
-          "text": "Help Mangrove",
-          "type": "button",
-          "value": "helpMangrove",
-          "color": "good"
-        },
-        {
-          "name": "no",
-          "text": "Be selfish",
-          "style": "danger",
-          "type": "button",
-          "value": "stillNo"
-        }
-      ]
-    }
-  ]
-};
+function formatFirstNoMessage(callbackId) {
+  const firstNoMessage = {
+    "attachments": [
+      {
+        "text": '😥 Are you sure?',
+        "fallback": "Too bad.",
+        "callback_id": callbackId,
+        "color": "#3AA3E3",
+        "attachment_type": "default",
+        "actions": [
+          {
+            "name": "firstNo",
+            "style": "primary",
+            "text": "I want to help!",
+            "type": "button",
+            "value": "helpMangrove",
+            "color": "good"
+          },
+          {
+            "name": "firstNo",
+            "text": "I don't want to help",
+            "style": "danger",
+            "type": "button",
+            "value": "stillNo"
+          }
+        ]
+      }
+    ]
+  };
+  return firstNoMessage;
+}
 
 function formatNewCampaignMessage(campaign, cb) {
   const newCampaignMessage = {
@@ -58,7 +61,7 @@ function formatNewCampaignMessage(campaign, cb) {
           "attachment_type": "default",
           "actions": [
             {
-              "name": "yes",
+              "name": "newCampaign",
               "style": "primary",
               "text": "Yes",
               "type": "button",
@@ -66,7 +69,7 @@ function formatNewCampaignMessage(campaign, cb) {
               "color": "good"
             },
             {
-              "name": "no",
+              "name": "newCampaign",
               "text": "No",
               "style": "danger",
               "type": "button",
@@ -80,7 +83,7 @@ function formatNewCampaignMessage(campaign, cb) {
   return cb(newCampaignMessage);
 }
 
-const optOutMessage = {
+let optOutMessage = {
   "attachments": [
     {
       "text": 'Fine then 😞 Do you still want to be notified for the next boost? 🐣',
@@ -90,7 +93,7 @@ const optOutMessage = {
       "attachment_type": "default",
       "actions": [
         {
-          "name": "yes",
+          "name": "optOut",
           "style": "primary",
           "text": "Yes, notify me ❤️",
           "type": "button",
@@ -98,7 +101,7 @@ const optOutMessage = {
           "color": "good"
         },
         {
-          "name": "no",
+          "name": "optOut",
           "text": "No, no, and no!",
           "style": "danger",
           "type": "button",
@@ -116,7 +119,8 @@ function handler(req, res) {
   const slack = payload.user;
   if ((payload) && (payload.callback_id)) {
     // The first time a user says no to supporting a campaign
-    if (payload.callback_id === 'firstNo') {
+    if (payload.actions[0].name === 'firstNo') {
+      console.log(payload);
       if (payload.actions[0].value === 'helpMangrove') {
         campaignsController.postTwitter(slack.id, payload.callback_id);
         return res.send(`Tweet sent! Way to go ${slack.name} 🙏`);
@@ -124,19 +128,21 @@ function handler(req, res) {
         return res.send(optOutMessage);
       }
       // When user is sure he doesn't want to share
-    } else if (payload.callback_id === 'optOut') {
+    } else if (payload.actions[0].name === 'optOut') {
       if (payload.actions[0].value === 'userStays') {
         return res.send('You\'re a charm ❤️ We\'ll keep you posted');
       } else if (payload.actions[0].value === 'userLeaves') {
         return res.send('Fine, you\'re out! Reach out when you change your mind. I don\'t hold grudges 😘');
       }
     }
-    if (payload.actions[0].value === 'support') {
+    if (payload.actions[0].name === 'newCampaign') {
+      if (payload.actions[0].value === 'support') {
+        campaignsController.postTwitter(slack.id, payload.callback_id);
+        return res.send(`Tweet sent! Way to go ${slack.name} 🙏`);
       // Send tweet immediately
-      campaignsController.postTwitter(slack.id, payload.callback_id);
-      return res.send(`Tweet sent! Way to go ${slack.name} 🙏`);
-    } else if (payload.actions[0].value === 'noSupport') {
-      return res.send(noMessage);
+      } else if (payload.actions[0].value === 'noSupport') {
+        return res.send(formatFirstNoMessage(payload.callback_id));
+      }
     }
     return res.send('Sorry I, didn\'t get that');
   }
