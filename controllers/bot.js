@@ -29,7 +29,7 @@ function formatFirstNoMessage(callbackId) {
           {
             "name": "firstNo",
             "style": "primary",
-            "text": "I want to help!",
+            "text": "I made a mistake",
             "type": "button",
             "value": "helpMangrove",
             "color": "good"
@@ -50,32 +50,37 @@ function formatFirstNoMessage(callbackId) {
 
 function formatNewCampaignMessage(campaign, cb) {
   const newCampaignMessage = {
-      "text": `⚡*New boost starting*⚡`,
+      "text": "🚀*New boost starting*🚀",
       "attachments": [
         {
-          "title": `Help ️${campaign.name} Make The Buzz`,
-          "text": `Click on *'Yes'* to tweet this: ${campaign.message_to_share}`,
-          "fallback": "You are unable to support the campaign",
+          "title": `️${campaign.message_backers}`,
+          "title_link": `http://localhost:3000/campaign/view/${campaign._id}`,
+          "author_link": "http://flickr.com/bobby/",
+          "author_icon": "http://flickr.com/icons/bobby.jpg",
+          "fallback": "A new boost is starting:",
           "callback_id": campaign._id,
-          "color": "#3AA3E3",
+          "text": `Your Tweet: "${campaign.message_to_share}"`,
           "attachment_type": "default",
           "actions": [
             {
               "name": "newCampaign",
               "style": "primary",
-              "text": "Yes",
+              "text": "Tweet this",
               "type": "button",
               "value": "support",
               "color": "good"
             },
             {
               "name": "newCampaign",
-              "text": "No",
+              "text": "I don't want to help",
               "style": "danger",
               "type": "button",
               "value": "noSupport"
             }
-          ]
+          ],
+          "footer": "By Mangrove",
+          "footer_icon": "https://pbs.twimg.com/profile_images/702777844976459776/fA19a6jo.png",
+          "color": "#3AA3E3",
         }
       ],
       "response_type": "ephemeral",
@@ -83,7 +88,7 @@ function formatNewCampaignMessage(campaign, cb) {
   return cb(newCampaignMessage);
 }
 
-let optOutMessage = {
+const optOutMessage = {
   "attachments": [
     {
       "text": 'Fine then 😞 Do you still want to be notified for the next boost? 🐣',
@@ -120,7 +125,6 @@ function handler(req, res) {
   if ((payload) && (payload.callback_id)) {
     // The first time a user says no to supporting a campaign
     if (payload.actions[0].name === 'firstNo') {
-      console.log(payload);
       if (payload.actions[0].value === 'helpMangrove') {
         campaignsController.postTwitter(slack.id, payload.callback_id);
         return res.send(`Tweet sent! Way to go ${slack.name} 🙏`);

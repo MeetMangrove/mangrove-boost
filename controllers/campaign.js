@@ -111,8 +111,6 @@ exports.postCampaign = (req, res, next) => {
   });
 };
 
-
-
 exports.postTwitter = (slackId, campaignId) => {
   Campaign.findOne({ _id: campaignId }, (err, campaign) => {
     if (err) {
