@@ -123,6 +123,7 @@ function handler(req, res) {
     }
     if (payload.actions[0].name === 'newCampaign') {
       if (payload.actions[0].value === 'support') {
+        campaignsController.addBackerToSharedGroup(slack.id, payload.callback_id);
         campaignsController.postTwitter(slack.id, payload.callback_id);
         return res.send(`Tweet sent! Way to go ${slack.name} 🙏`);
       // Send tweet immediately
