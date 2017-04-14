@@ -112,12 +112,10 @@ exports.postInfos = (req, res, next) => {
         formatBackers(slackUsers, (backers) => {
           Campaign.findOneAndUpdate(
             { _id: campaign._id },
-            { $set: { backers: backers } },
+            { $set: { 'backers.waiting': backers } },
             { new: true },
             (err, updatedCampaign) => {
               if (err) { return (err); }
-
-              // Bot.sendStartCampaign(updatedCampaign);
               res.redirect(`/campaign/new/resume/${campaign._id}`);
             }
           );
@@ -132,7 +130,13 @@ exports.postInfos = (req, res, next) => {
 * Campaign Editor
 */
 exports.postCampaign = (req, res, next) => {
+  Campaign.findOne({ _id: req.params.id }, (err, campaign) => {
+    if (err) { return next(err); }
 
+    Bot.sendStartCampaign(campaign);
+    req.flash('sucess', { msg: "Campaign send" });
+    return res.redirect('/campaign/all');
+  });
 }
 
 
