@@ -7,9 +7,6 @@ const User = require('../models/User');
 const Bot = bluebird.promisifyAll(require('./bot'), { multiArgs: true });
 
 
-
-
-
 /**
  * GET /campaign/all
  * History of all campaign
@@ -149,7 +146,6 @@ exports.postTwitter = (userId, campaignId) => {
     if (err) { return next(err); }
     return user;
   });
-
 
   const token = user.tokens.find(token => token.kind === 'twitter');
   const T = new Twit({

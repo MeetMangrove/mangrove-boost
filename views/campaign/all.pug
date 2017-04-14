@@ -2,8 +2,10 @@ extends ../layout
 
 block content
   .row
-    .col-md-6.col-md-offset-3
+    .col-md-12
       .main-container
+        include ../partials/admin/menu
+        
         H1 Campaign
         br
         a.btn.primary-btn(href='/campaign/edit', role='button') Create new campaign

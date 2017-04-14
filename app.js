@@ -31,6 +31,7 @@ dotenv.load({ path: '.env' });
  * Controllers (route handlers).
  */
 const homeController = require('./controllers/home');
+const adminController = require('./controllers/admin');
 const userController = require('./controllers/user');
 const apiController = require('./controllers/api');
 const contactController = require('./controllers/contact');
@@ -126,11 +127,13 @@ app.get('/onboarding/step1', onboardingController.step1);
 app.get('/onboarding/step2', passportConfig.isAuthenticated, onboardingController.step2);
 app.get('/onboarding/step3', passportConfig.isAuthenticated, onboardingController.step3);
 
+app.get('/admin/index', passportConfig.isAdmin, adminController.index);
+
 app.get('/campaign/all', passportConfig.isAdmin, campaignController.all);
 app.get('/campaign/edit/', passportConfig.isAdmin, campaignController.edit);
 app.get('/campaign/edit/:id', passportConfig.isAdmin, campaignController.edit);
 app.post('/campaign/edit/', passportConfig.isAdmin, campaignController.postCampaign);
-app.get('/campaign/view/:id', passportConfig.isAdmin, campaignController.view);
+app.get('/campaign/view/:id', campaignController.view);
 
 // SLACKBOT
 app.post('/bot', (req, res) => {
@@ -145,8 +148,6 @@ app.post('/forgot', userController.postForgot);
 
 app.get('/reset/:token', userController.getReset);
 app.post('/reset/:token', userController.postReset);
-app.get('/signup', userController.getSignup);
-app.post('/signup', userController.postSignup);
 app.get('/account', passportConfig.isAuthenticated, userController.getAccount);
 app.post('/account/profile', passportConfig.isAuthenticated, userController.postUpdateProfile);
 app.post('/account/password', passportConfig.isAuthenticated, userController.postUpdatePassword);

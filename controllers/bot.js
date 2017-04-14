@@ -84,4 +84,3 @@ exports.sendStartCampaign = (campaign) => {
 
 
 exports.handler = handler;
-exports.sendStartCampaign = sendStartCampaign;

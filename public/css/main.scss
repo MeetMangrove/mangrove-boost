@@ -1,5 +1,7 @@
 @import "lib/bootstrap/bootstrap";
 @import "lib/font-awesome/font-awesome";
+@import "themes/default/form";
+
 
 // Scaffolding
 // -------------------------
@@ -29,7 +31,7 @@ body {
 }
 
 h1{
-  font-family: Proxima_semi_bold;
+  font-family: "Proxima_semi_bold";
 }
 
 h2{
@@ -64,12 +66,15 @@ footer{
   color: white;
   font-weight: bold;
 }
+a:hover{
+  color: #000;
+}
 
 .btn-block{
   height: 45px;
   width: 230px;
   color: white;
-  font-family: Proxima_semi_bold !important;
+  font-family: "Proxima_semi_bold" !important;
   font-size: 16px;
   line-height: 33px;
 }

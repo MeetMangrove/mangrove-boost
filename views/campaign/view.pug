@@ -4,5 +4,35 @@ block content
   .row
     .col-md-6.col-md-offset-3
       .main-container
-        H1 #{campaign.name}
+        h2 Do you want to spread the vibe?
         br
+        if user
+          br
+          br
+          .row
+            .col-md-6
+              if !user.twitter 
+                a.btn.btn-block.btn-twitter.btn-social.text-center(href='/auth/twitter')
+                  i.fa.fa-twitter
+                  | Connect with Twitter
+              else
+                | You are already connected your Twitter account 🏄🏻
+            .col-md-6
+              if !user.facebook
+                a.btn.btn-block.btn-facebook.btn-social.text-center(href='/auth/facebook')
+                  i.fa.fa-facebook
+                  | Connect with Facebook
+              else
+                | You are already connected your Facebook account 🏄🏻
+        else
+          .row
+            h4 What’s your Slack handle ?
+            br
+            .row.justify-content-md-center
+              .col-md-6.col-md-offset-3
+                a.btn.btn-block.btn-slack.btn-social.text-center(href='/auth/slack')
+                  i.fa.fa-slack
+                  | Sign in with Slack
+        
+        h1 #{campaign.name}
+            
