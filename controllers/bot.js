@@ -174,4 +174,3 @@ function sendStartCampaign(campaign) {
 }
 
 exports.handler = handler;
-exports.sendStartCampaign = sendStartCampaign;
