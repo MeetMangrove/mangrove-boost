@@ -128,6 +128,7 @@ app.get('/onboarding/step2', passportConfig.isAuthenticated, onboardingControlle
 app.get('/onboarding/step3', passportConfig.isAuthenticated, onboardingController.step3);
 
 app.get('/admin/index', passportConfig.isAdmin, adminController.index);
+app.get('/admin/user', passportConfig.isAdmin, adminController.user);
 
 app.get('/campaign/all', passportConfig.isAdmin, campaignController.all);
 app.get('/campaign/edit/', passportConfig.isAdmin, campaignController.edit);

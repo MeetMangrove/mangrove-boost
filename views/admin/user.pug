@@ -1,0 +1,33 @@
+extends ../layout
+
+block content
+  .row
+    .col-md-12
+      .main-container
+        include ../partials/admin/menu
+        
+        H1 Users
+        br
+        .row.justify-content-md-center
+          .col-md-12
+            table.table.table-striped.table-bordered.table-hover.table-responsive.justify-content-md-center
+              thead.thead-default
+                tr
+                  th Avatar
+                  th Name
+                  th Share
+                  th Respond
+                  th Unsubscribe
+              tbody
+                for user in users
+                  tr
+                    td
+                      img(src=user.profile.picture, width=50, height=50)
+                    td
+                      | #{user.profile.firstName} #{user.profile.name}
+                    td
+                      | 0
+                    td
+                      | 0
+                    td 
+                      | 0
