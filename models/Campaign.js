@@ -7,7 +7,11 @@ const campaignSchema = new mongoose.Schema({
   date_release: Date,
   image: String,
   link: String,
-  backers: Array
+  backers: {
+    waiting: [],
+    shared: [],
+    refused: []
+  },
 }, { timestamps: true });
 
 const Campaign = mongoose.model('Campaign', campaignSchema);

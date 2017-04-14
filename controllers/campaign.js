@@ -189,6 +189,7 @@ exports.createShare = (slackId, campaignId, socialAccount) => {
       return (err);
     }
 
+
     Campaign.findOne({ _id: campaignId }, (err, campaign) => {
       if (err) {
         return (err);
@@ -267,51 +268,64 @@ exports.postTwitter = (slackId, campaignId) => {
   });
 };
 
+// if backer supports the campaign, put it in the 'shared' group
+exports.addBackerToSharedGroup = (slackId, campaignId) => {
+  Campaign.findOneAndUpdate(
+    { _id: campaignId },
+    { $push: { 'backers.shared': slackId },
+      $pull: { 'backers.waiting': { auth_post: false, user_slack_id: slackId } },
+    },
+    { new: true },
+    (err, updatedCampaign) => {
+      if (err) {
+        return err;
+      }
+      return updatedCampaign;
+    }
+  );
+};
 
+// if backer refuses to support the campaign, add to 'refused' group
+exports.addBackerToRefusedGroup = (slackId, campaignId) => {
+  Campaign.findOneAndUpdate(
+    { _id: campaignId },
+    { $push: { 'backers.refused': slackId },
+      $pull: { 'backers.waiting': { auth_post: false, user_slack_id: slackId } },
+    },
+    { new: true },
+    (err, updatedCampaign) => {
+      if (err) {
+        return err;
+      }
+      return updatedCampaign;
+    }
+  );
+};
 
-// exports.addAuthBackerToCampaign = (slackId, campaignId) => {
-//   User.findOne({ slack: slackId }, (err, user) => {
-//     if (err) {
-//       console.log(err);
-//       return err;
-//     }
-//     Campaign.findOneAndUpdate(
-//       { name: campaignName },
-//       { $push: { backers: user._id } },
-//       { new: true }, (err, campaign) => {
-//         if (err) {
-//           console.log(err);
-//           return err;
-//         } else if (campaign) {
-//           console.log(`${user.profile.name} added to ${campaign.name}`);
-//         } else {
-//           console.log('An error ocured');
-//         }
-//       });
-//   });
-// };
-
-exports.postTwitter = (userId, campaignId) => {
-  const campaign = Campaign.findOne({ _id: campaignId }, (err, campaign) => {
-    if (err) { return next(err); }
-    return campaign;
-  });
-
-  const user = User.findOne({ _id: userId }, (err, user) => {
-    if (err) { return next(err); }
-    return user;
-  });
-
-  const token = user.tokens.find(token => token.kind === 'twitter');
-  const T = new Twit({
-    consumer_key: process.env.TWITTER_KEY,
-    consumer_secret: process.env.TWITTER_SECRET,
-    access_token: token.accessToken,
-    access_token_secret: token.tokenSecret
-  });
-
-  T.post('statuses/update', { status: campaign.message_to_share }, (err) => {
-    if (err) { return next(err); }
-    console.log("Tweet posté");
+exports.postTwitter = (slackId, campaignId) => {
+  Campaign.findOne({ _id: campaignId }, (err, campaign) => {
+    if (err) { return (err); }
+    if (campaign) {
+      // Works until here
+      User.findOne({ slack: slackId }, (err, user) => {
+        if (err) {
+          return (err);
+        }
+        if (user) {
+          const token = user.tokens.find(token => token.kind === 'twitter');
+          const T = new Twit({
+            consumer_key: process.env.TWITTER_KEY,
+            consumer_secret: process.env.TWITTER_SECRET,
+            access_token: token.accessToken,
+            access_token_secret: token.tokenSecret
+          });
+          // Call Twitter API and post Tweet
+          T.post('statuses/update', { status: campaign.message_to_share }, (err) => {
+            if (err) { return (err); }
+            console.log('Tweet sent');
+          });
+        }
+      });
+    }
   });
 };
