@@ -8,14 +8,6 @@ const campaignSchema = new mongoose.Schema({
   backers: Array
 }, { timestamps: true });
 
-campaignSchema.pre('save', function save(next) {
-  const campaign = this;
-  if (!campaign._id) {
-  //  campaign._id = new mongoose.Types.ObjectId;
-  }
-  next();
-});
-
 const Campaign = mongoose.model('Campaign', campaignSchema);
 
 module.exports = Campaign;
