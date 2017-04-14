@@ -186,12 +186,11 @@ function formatBackers(slackUsers, callback) {
 }
 
 
-exports.createShare = (slackId, campaignId, socialAccount) => {
+exports.createShare = (slackId, campaignId, socialAccount, cb) => {
   User.findOne({ slack: slackId }, (err, user) => {
     if (err) {
       return (err);
     }
-
 
     Campaign.findOne({ _id: campaignId }, (err, campaign) => {
       if (err) {
@@ -207,8 +206,13 @@ exports.createShare = (slackId, campaignId, socialAccount) => {
         link: campaign.link,
         image: campaign.image
       };
-      share.save((err) => {
-        done(err, share);
+
+      share.save((err, share) => {
+        if (err) {
+          return cb(err);
+        }
+
+        return cb(share);
       });
     });
   });
@@ -315,17 +319,19 @@ exports.postTwitter = (slackId, campaignId) => {
           return (err);
         }
         if (user) {
-          const token = user.tokens.find(token => token.kind === 'twitter');
-          const T = new Twit({
-            consumer_key: process.env.TWITTER_KEY,
-            consumer_secret: process.env.TWITTER_SECRET,
-            access_token: token.accessToken,
-            access_token_secret: token.tokenSecret
-          });
-          // Call Twitter API and post Tweet
-          T.post('statuses/update', { status: campaign.message_to_share }, (err) => {
-            if (err) { return (err); }
-            console.log('Tweet sent');
+          this.createShare(user.slack, campaign._id, "twitter", (share) => {
+            const token = user.tokens.find(token => token.kind === 'twitter');
+            const T = new Twit({
+              consumer_key: process.env.TWITTER_KEY,
+              consumer_secret: process.env.TWITTER_SECRET,
+              access_token: token.accessToken,
+              access_token_secret: token.tokenSecret
+            });
+            // Call Twitter API and post Tweet
+            T.post('statuses/update', { status: `share.message_to_share req.headers.host/share/share._id` }, (err) => {
+              if (err) { return (err); }
+              console.log('Tweet sent');
+            });
           });
         }
       });
