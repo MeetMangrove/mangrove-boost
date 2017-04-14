@@ -1,0 +1,24 @@
+extends layout
+
+block content
+  .row
+    .col-md-6.col-md-offset-3
+      .main-container
+          h2 🤙 Share any feedback ?
+          br
+          form.form-horizontal(id='contact-form', method='POST')
+            input(type='hidden', name='_csrf', value=_csrf)
+            .form-group
+              label.col-sm-3.control-label(for='name') Name
+              .col-sm-7
+                input.input-plain-grey(type='text', name='name', id='name', placeholder='Your name', autofocus, required)
+            .form-group
+              label.col-sm-3.control-label(for='email') Email
+              .col-sm-7
+                input.input-plain-grey(type='email', name='email', id='email', placeholder='Email', required)
+            .form-group
+              label.col-sm-3.justify-content-md-center.control-label(for='message') Message
+              .col-md-7
+                textarea.input-plain-grey(name='message', id='message', placeholder='Your Feedback', required)
+            button.btn.primary-btn(type='submit') 
+              h4 👉🏻 Send my Feedback

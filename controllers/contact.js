@@ -1,12 +1,12 @@
 const nodemailer = require('nodemailer');
+const sgTransport = require('nodemailer-sendgrid-transport');
 
-const transporter = nodemailer.createTransport({
-  service: 'SendGrid',
+const transporter = nodemailer.createTransport(sgTransport({
   auth: {
     user: process.env.SENDGRID_USER,
-    pass: process.env.SENDGRID_PASSWORD
+    api_key: process.env.SENDGRID_API_KEY
   }
-});
+}));
 
 /**
  * GET /contact
@@ -35,9 +35,9 @@ exports.postContact = (req, res) => {
   }
 
   const mailOptions = {
-    to: 'your@email.com',
+    to: 'mangroveboost@gmail.com',
     from: `${req.body.name} <${req.body.email}>`,
-    subject: 'Contact Form | Hackathon Starter',
+    subject: 'Contact Form | Mangrove Boost',
     text: req.body.message
   };
 

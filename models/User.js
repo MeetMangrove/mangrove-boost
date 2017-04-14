@@ -13,10 +13,8 @@ const userSchema = new mongoose.Schema({
   slack: String,
   tokens: Array,
   profile: {
+    firstName: String,
     name: String,
-    gender: String,
-    location: String,
-    website: String,
     picture: String
   }
 }, { timestamps: true });

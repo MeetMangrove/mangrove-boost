@@ -36,20 +36,6 @@ passport.use(new LocalStrategy({ usernameField: 'email' }, (email, password, don
   });
 }));
 
-/**
- * OAuth Strategy Overview
- *
- * - User is already logged in.
- *   - Check if there is an existing account with a provider id.
- *     - If there is, return an error message. (Account merging not supported)
- *     - Else link new OAuth account with currently logged-in user.
- * - User is not logged in.
- *   - Check if it's a returning user.
- *     - If returning user, sign in and we are done.
- *     - Else check if there is an existing account with user's email.
- *       - If there is, return an error message.
- *       - Else create a new account.
- */
 
 /**
  * Sign in with Facebook.
@@ -72,9 +58,6 @@ passport.use(new FacebookStrategy({
           if (err) { return done(err); }
           user.facebook = profile.id;
           user.tokens.push({ kind: 'facebook', accessToken });
-          user.profile.name = user.profile.name || `${profile.name.givenName} ${profile.name.familyName}`;
-          user.profile.gender = user.profile.gender || profile._json.gender;
-          user.profile.picture = user.profile.picture || `https://graph.facebook.com/${profile.id}/picture?type=large`;
           user.save((err) => {
             req.flash('info', { msg: 'Facebook account has been linked.' });
             done(err, user);
@@ -95,13 +78,8 @@ passport.use(new FacebookStrategy({
           done(err);
         } else {
           const user = new User();
-          user.email = profile._json.email;
           user.facebook = profile.id;
           user.tokens.push({ kind: 'facebook', accessToken });
-          user.profile.name = `${profile.name.givenName} ${profile.name.familyName}`;
-          user.profile.gender = profile._json.gender;
-          user.profile.picture = `https://graph.facebook.com/${profile.id}/picture?type=large`;
-          user.profile.location = (profile._json.location) ? profile._json.location.name : '';
           user.save((err) => {
             done(err, user);
           });
@@ -131,9 +109,6 @@ passport.use(new TwitterStrategy({
           if (err) { return done(err); }
           user.twitter = profile.id;
           user.tokens.push({ kind: 'twitter', accessToken, tokenSecret });
-          user.profile.name = user.profile.name || profile.displayName;
-          user.profile.location = user.profile.location || profile._json.location;
-          user.profile.picture = user.profile.picture || profile._json.profile_image_url_https;
           user.save((err) => {
             if (err) { return done(err); }
             req.flash('info', { msg: 'Twitter account has been linked.' });
@@ -149,15 +124,8 @@ passport.use(new TwitterStrategy({
         return done(null, existingUser);
       }
       const user = new User();
-      // Twitter will not provide an email address.  Period.
-      // But a person’s twitter username is guaranteed to be unique
-      // so we can "fake" a twitter email address as follows:
-      user.email = `${profile.username}@twitter.com`;
       user.twitter = profile.id;
       user.tokens.push({ kind: 'twitter', accessToken, tokenSecret });
-      user.profile.name = profile.displayName;
-      user.profile.location = profile._json.location;
-      user.profile.picture = profile._json.profile_image_url_https;
       user.save((err) => {
         done(err, user);
       });
@@ -171,8 +139,9 @@ passport.use(new SlackStrategy({
   clientSecret: process.env.SLACK_SECRET,
   callbackURL: '/auth/slack/callback'
 }, (req, accessToken, tokenSecret, profile, done) => {
+  console.log(profile);
   if (req.user) {
-    User.findOne({ slack: profile.id }, (err, existingUser) => {
+    User.findOne({ email: profile.user.email }, (err, existingUser) => {
       if (err) { return done(err); }
       if (existingUser) {
         req.flash('errors', { msg: 'There is already a Slack account that belongs to you. Sign in with that account or delete it, then link it with your current account.' });
@@ -181,8 +150,11 @@ passport.use(new SlackStrategy({
         User.findById(req.user.id, (err, user) => {
           if (err) { return done(err); }
           user.slack = profile.id;
+          user.email = profile.user.email;
           user.tokens.push({ kind: 'slack', accessToken, tokenSecret });
-          user.profile.name = user.profile.name || profile.displayName;
+          user.profile.picture = profile.user.image_192;
+          user.profile.firstName = user.profile.firstName || profile.displayName.split(' ')[0];
+          user.profile.name = user.profile.name || profile.displayName.substring(user.profile.firstName.length).trim();
           user.save((err) => {
             if (err) { return done(err); }
             req.flash('info', { msg: 'Slack account has been linked.' });
@@ -201,7 +173,9 @@ passport.use(new SlackStrategy({
       user.email = profile.user.email;
       user.slack = profile.id;
       user.tokens.push({ kind: 'slack', accessToken, tokenSecret });
-      user.profile.name = profile.displayName;
+      user.profile.picture = profile.user.image_192;
+      user.profile.firstName = user.profile.firstName || profile.displayName.split(' ')[0];
+      user.profile.name = user.profile.name || profile.displayName.substring(user.profile.firstName.length).trim();
       user.save((err) => {
         done(err, user);
       });

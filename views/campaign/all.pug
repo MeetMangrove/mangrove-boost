@@ -8,11 +8,26 @@ block content
         
         H1 Campaign
         br
-        a.btn.primary-btn(href='/campaign/edit', role='button') Create new campaign
+        a.btn.primary-btn(href='/campaign/new/link', role='button') Create new campaign
+        br
         br
         .row.justify-content-md-center
-          .col-md-6.col-md-offset-3
-            ul
-              for campaign in campaigns
-                li
-                  a(href='/campaign/view/'+campaign._id) #{campaign.name}
+          .col-md-12
+            table.table.table-striped.table-bordered.table-hover.table-responsive.justify-content-md-center
+              thead.thead-default
+                tr
+                  th Campaign
+                  th Share
+                  th Respond
+                  th Unsubscribe
+              tbody
+                for campaign in campaigns
+                  tr
+                    td
+                      a(href='/campaign/view/'+campaign._id) #{campaign.name}
+                    td
+                      | 0
+                    td
+                      | 0
+                    td 
+                      | 0

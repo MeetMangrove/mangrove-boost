@@ -1,0 +1,17 @@
+extends ../../layout
+
+block content
+  .row
+    .col-md-6.col-md-offset-3
+      .main-container
+        .row.justify-content-md-center
+          .col-md-12  
+            form.form-horizontal(id='new-campaign-form', method='POST')
+              input(type='hidden', name='_csrf', value=_csrf)
+              .form-group
+                label.col-sm-3.control-label(for='link') Link
+                .col-sm-7
+                  input.form-control(type='url', name='link', id='link', placeholder='Link of Campaign', autofocus, required)
+              br
+              button.btn.primary-btn(type='submit') 
+                h4 🔥 🔥 Boom 🔥 🔥
