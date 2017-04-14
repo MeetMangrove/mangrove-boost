@@ -155,6 +155,23 @@ exports.addBackerToSharedGroup = (slackId, campaignId) => {
   );
 };
 
+// if backer refuses to support the campaign, add to 'refused' group
+exports.addBackerToRefusedGroup = (slackId, campaignId) => {
+  Campaign.findOneAndUpdate(
+    { _id: campaignId },
+    { $push: { 'backers.refused': slackId },
+      $pull: { 'backers.waiting': { auth_post: false, user_slack_id: slackId } },
+    },
+    { new: true },
+    (err, updatedCampaign) => {
+      if (err) {
+        return err;
+      }
+      return updatedCampaign;
+    }
+  );
+};
+
 exports.postTwitter = (slackId, campaignId) => {
   Campaign.findOne({ _id: campaignId }, (err, campaign) => {
     if (err) { return (err); }

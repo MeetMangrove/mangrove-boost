@@ -110,15 +110,9 @@ function handler(req, res) {
       if (payload.actions[0].value === 'helpMangrove') {
         campaignsController.postTwitter(slack.id, payload.callback_id);
         return res.send(`Tweet sent! Way to go ${slack.name} 🙏`);
-      } else if (payload.actions[0].value === 'stillNo') {
+      } else if (payload.actions[0].value === 'stillNo') { // When user is sure he doesn't want to share
+        campaignsController.addBackerToRefusedGroup(slack.id, payload.callback_id);
         return res.send(optOutMessage);
-      }
-      // When user is sure he doesn't want to share
-    } else if (payload.actions[0].name === 'optOut') {
-      if (payload.actions[0].value === 'userStays') {
-        return res.send('You\'re a charm ❤️ We\'ll keep you posted');
-      } else if (payload.actions[0].value === 'userLeaves') {
-        return res.send('Fine, you\'re out! Reach out when you change your mind. I don\'t hold grudges 😘');
       }
     }
     if (payload.actions[0].name === 'newCampaign') {
