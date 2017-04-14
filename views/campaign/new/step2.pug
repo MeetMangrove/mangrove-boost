@@ -1,0 +1,32 @@
+extends ../../layout
+
+block content
+  .row
+    .col-md-6.col-md-offset-3
+      .main-container
+        .row.justify-content-md-center
+          .col-md-12  
+            form.form-horizontal(id='new-campaign-form', method='POST')
+              input(type='hidden', name='_csrf', value=_csrf)
+              .form-group
+                label.col-sm-3.control-label(for='name') Name
+                .col-sm-7
+                  input.form-control(type='text', name='name', id='name', placeholder='Name of Campaign', autofocus, required)
+              .form-group
+                label.col-sm-3.control-label(for='message_backers') Message for backers
+                .col-sm-7
+                  textarea.form-control(name='message_backers', id='message_backers', placeholder='Message you want to share', required)
+              .form-group
+                label.col-sm-3.justify-content-md-center.control-label(for='message_to_share') Message to share
+                .col-md-7
+                  textarea.form-control(name='message_to_share', id='message_to_share', placeholder='Content you want to share', required)
+              .form-group
+                label.col-sm-3.control-label(for='date_release') Date
+                .col-sm-7
+                  input.form-control.date(type='datetime-local', name='date_release', id='date_release', placeholder='When do you want to spread the vibe', required)
+                  span 
+                    small
+                      | Paris GMT+1
+              br
+              button.btn.primary-btn(type='submit') 
+                h4 🔥 🔥 Boom 🔥 🔥

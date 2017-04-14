@@ -1,0 +1,13 @@
+extends ../../layout
+
+block content
+  .row
+    .col-md-6.col-md-offset-3
+      .main-container
+        h2 Do you want to spread the vibe?
+        br
+        h1 #{campaign.name}
+        form.form-horizontal(id='new-campaign-form', method='POST')
+          input(type='hidden', name='_csrf', value=_csrf)
+          button.btn.primary-btn(type='submit') 
+            h4 🔥 🔥 Boom 🔥 🔥

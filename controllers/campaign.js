@@ -33,6 +33,110 @@ exports.edit = (req, res) => {
   });
 };
 
+/**
+* GET /campaign/new/link
+* Campaign Editor
+*/
+exports.step1 = (req, res) => {
+  res.render('campaign/new/step1', {
+    title: 'New Campaign'
+  });
+};
+
+/**
+* GET /campaign/new/infos/:id
+* Campaign Editor
+*/
+exports.step2 = (req, res) => {
+  res.render('campaign/new/step2', {
+    title: 'New Campaign'
+  });
+};
+
+
+/**
+* GET /campaign/new/resume/:id
+* Campaign Editor
+*/
+exports.step3 = (req, res) => {
+  Campaign.findOne({ _id: req.params.id }, (err, result) => {
+    if (err) { return next(err); }
+
+    res.render('campaign/new/step3', {
+      title: 'Campaign ' + result.name,
+      campaign: result
+    });
+  });
+};
+
+
+/**
+* POST /campaign/new/link
+* Campaign Editor
+*/
+exports.postLink = (req, res, next) => {
+  const link = req.body.link;
+  if(!link.match(new RegExp(/[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi))){
+    req.flash('errors', { msg: "Url not match pattern" });
+    return res.redirect('/campaign/new/link');
+  }
+
+  const campaign = new Campaign({
+    link: link
+  });
+
+  campaign.save((err) => {
+    if (err) { return (err); }
+    res.redirect(`/campaign/new/infos/${campaign._id}`);
+  });
+}
+
+
+ /**
+  * POST /campaign/new/link
+  * Create a new local account.
+  */
+exports.postInfos = (req, res, next) => {
+  Campaign.findOne({ _id: req.params.id }, (err, campaign) => {
+    if (err) { return next(err); }
+    campaign.name = req.body.name;
+    campaign.message_to_share = req.body.message_to_share;
+    campaign.message_backers = req.body.message_backers;
+    campaign.date_release = req.body.date_release;
+
+    campaign.save((err) => {
+      if (err) {
+        req.flash('errors', err);
+        return res.redirect(`/campaign/new/infos/${campaign._id}`);
+      }
+      getSlackUsers((slackUsers) => {
+        formatBackers(slackUsers, (backers) => {
+          Campaign.findOneAndUpdate(
+            { _id: campaign._id },
+            { $set: { backers: backers } },
+            { new: true },
+            (err, updatedCampaign) => {
+              if (err) { return (err); }
+
+              // Bot.sendStartCampaign(updatedCampaign);
+              res.redirect(`/campaign/new/resume/${campaign._id}`);
+            }
+          );
+        });
+      });
+    });
+  });
+};
+
+/**
+* POST /campaign/new/link
+* Campaign Editor
+*/
+exports.postCampaign = (req, res, next) => {
+
+}
+
+
  /**
   * GET /campaign/view/:id
   * Campaign Page
@@ -78,39 +182,6 @@ function formatBackers(slackUsers, callback) {
   }
 }
 
- /**
-  * POST /campaign/edit
-  * Create a new local account.
-  */
-exports.postCampaign = (req, res, next) => {
-  const campaign = new Campaign({
-    name: req.body.name,
-    message_to_share: req.body.message_to_share,
-    message_backers: req.body.message_backers,
-    date_release: req.body.date_release
-  });
-
-  campaign.save((err) => {
-    if (err) { return (err); }
-
-    getSlackUsers((slackUsers) => {
-      formatBackers(slackUsers, (backers) => {
-        Campaign.findOneAndUpdate(
-          { _id: campaign._id },
-          { $set: { backers: backers } },
-          { new: true },
-          (err, updatedCampaign) => {
-            if (err) { return (err); }
-
-            console.log('sending campain', updatedCampaign.backers);
-            Bot.sendStartCampaign(updatedCampaign);
-            res.redirect(`/campaign/view/${updatedCampaign._id}`);
-          }
-        );
-      });
-    });
-  });
-};
 
 exports.createShare = (slackId, campaignId, socialAccount) => {
   User.findOne({ slack: slackId }, (err, user) => {

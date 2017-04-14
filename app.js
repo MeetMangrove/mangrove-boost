@@ -132,6 +132,12 @@ app.get('/admin/user', passportConfig.isAdmin, adminController.user);
 
 app.get('/campaign/all', passportConfig.isAdmin, campaignController.all);
 app.get('/campaign/edit/', passportConfig.isAdmin, campaignController.edit);
+app.get('/campaign/new/link', passportConfig.isAdmin, campaignController.step1);
+app.post('/campaign/new/link', passportConfig.isAdmin, campaignController.postLink);
+app.get('/campaign/new/infos/:id', passportConfig.isAdmin, campaignController.step2);
+app.post('/campaign/new/infos/:id', passportConfig.isAdmin, campaignController.postInfos);
+app.get('/campaign/new/resume/:id', passportConfig.isAdmin, campaignController.step3);
+app.post('/campaign/new/resume/:id', passportConfig.isAdmin, campaignController.postCampaign);
 app.get('/campaign/edit/:id', passportConfig.isAdmin, campaignController.edit);
 app.post('/campaign/edit/', passportConfig.isAdmin, campaignController.postCampaign);
 app.get('/campaign/view/:id', campaignController.view);
