@@ -113,8 +113,59 @@ exports.postCampaign = (req, res, next) => {
 };
 
 exports.createShare = (slackId, campaignId, socialAccount) => {
-  Share.findOne()
+  User.findOne({ slack: slackId }, (err, user) => {
+    if (err) {
+      return (err);
+    }
+
+    Campaign.findOne({ _id: campaignId }, (err, campaign) => {
+      if (err) {
+        return (err);
+      }
+
+      const share = new Share();
+      share = {
+        campaign: campaign._id,
+        backer: user.slack,
+        social_account: socialAccount,
+        message_to_share: campaign.message_to_share,
+        link: campaign.link,
+        image: campaign.image
+      };
+      share.save((err) => {
+        done(err, share);
+      });
+    });
+  });
 }
+
+/**
+* GET /share/:id
+* Redirect To Link
+*/
+exports.shareLink = (req, res) => {
+  Share.findOne({ _id: req.params.id }, (err, share) => {
+    if (err) {
+      req.flash('error', { msg: 'Link unavailable.' });
+      return res.redirect('/');
+   }
+
+   Share.findOneAndUpdate(
+     { _id: share._id },
+     { clic: share.clic + 1  },
+     (err, campaign) => {
+       if (err) {
+         console.log(err);
+         return err;
+       } else if (campaign) {
+         console.log(`${user.profile.name} added to ${campaign.name}`);
+       } else {
+         console.log('An error ocured');
+       }
+   });
+   return res.redirect(share.link);
+  });
+};
 
 
 exports.postTwitter = (slackId, campaignId) => {

@@ -5,6 +5,8 @@ const campaignSchema = new mongoose.Schema({
   message_to_share: String,
   message_backers: String,
   date_release: Date,
+  image: String,
+  link: String,
   backers: Array
 }, { timestamps: true });
 

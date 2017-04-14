@@ -5,8 +5,10 @@ const shareSchema = new mongoose.Schema({
   backer: String,
   social_account: String,
   message_to_share: String,
+  link: String,
   image: String,
-  date_release: Date
+  date_release: Date,
+  clic: Number
 }, { timestamps: true });
 
 

@@ -135,6 +135,10 @@ app.get('/campaign/edit/:id', passportConfig.isAdmin, campaignController.edit);
 app.post('/campaign/edit/', passportConfig.isAdmin, campaignController.postCampaign);
 app.get('/campaign/view/:id', campaignController.view);
 
+
+app.get('/share/:id', campaignController.shareLink);
+
+
 // SLACKBOT
 app.post('/bot', (req, res) => {
   botController.handler(req, res);
@@ -145,6 +149,9 @@ app.post('/login', userController.postLogin);
 app.get('/logout', userController.logout);
 app.get('/forgot', userController.getForgot);
 app.post('/forgot', userController.postForgot);
+
+app.get('/contact', contactController.getContact);
+app.post('/contact', contactController.postContact);
 
 app.get('/reset/:token', userController.getReset);
 app.post('/reset/:token', userController.postReset);
