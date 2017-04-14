@@ -143,7 +143,7 @@ controller.on('direct_message', (bot, message) => {
 
 // When a campaign is created, the bot pings slack users
 function sendStartCampaign(campaign) {
-  campaign.backers.forEach((backer) => {
+  campaign.backers.waiting.forEach((backer) => {
     if (backer.user_slack_id !== process.env.SLACK_USER_ID) {
       return;
     }
@@ -156,3 +156,4 @@ function sendStartCampaign(campaign) {
 }
 
 exports.handler = handler;
+exports.sendStartCampaign = sendStartCampaign;

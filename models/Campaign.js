@@ -5,7 +5,11 @@ const campaignSchema = new mongoose.Schema({
   message_to_share: String,
   message_backers: String,
   date_release: Date,
-  backers: Array
+  backers: {
+    waiting: [],
+    shared: [],
+    refused: []
+  },
 }, { timestamps: true });
 
 campaignSchema.pre('save', function save(next) {

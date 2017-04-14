@@ -96,12 +96,11 @@ exports.postCampaign = (req, res, next) => {
       formatBackers(slackUsers, (backers) => {
         Campaign.findOneAndUpdate(
           { _id: campaign._id },
-          { $set: { backers: backers } },
+          { $set: { 'backers.waiting': backers } },
           { new: true },
           (err, updatedCampaign) => {
             if (err) { return (err); }
 
-            console.log('sending campain', updatedCampaign.backers);
             Bot.sendStartCampaign(updatedCampaign);
             res.redirect(`/campaign/view/${updatedCampaign._id}`);
           }
@@ -138,8 +137,6 @@ exports.postTwitter = (slackId, campaignId) => {
     }
   });
 };
-
-
 
 // exports.addAuthBackerToCampaign = (slackId, campaignId) => {
 //   User.findOne({ slack: slackId }, (err, user) => {
