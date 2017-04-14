@@ -2,6 +2,7 @@
 const bluebird = require('bluebird');
 const request = bluebird.promisifyAll(require('request'), { multiArgs: true });
 const Campaign = require('../models/Campaign');
+const Share = require('../models/Share');
 const User = require('../models/User');
 const Bot = bluebird.promisifyAll(require('./bot'), { multiArgs: true });
 const Twit = require('twit');
@@ -110,6 +111,11 @@ exports.postCampaign = (req, res, next) => {
     });
   });
 };
+
+exports.createShare = (slackId, campaignId, socialAccount) => {
+  Share.findOne()
+}
+
 
 exports.postTwitter = (slackId, campaignId) => {
   Campaign.findOne({ _id: campaignId }, (err, campaign) => {
