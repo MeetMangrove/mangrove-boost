@@ -139,7 +139,7 @@ app.post('/campaign/new/infos/:id', passportConfig.isAdmin, campaignController.p
 app.get('/campaign/new/resume/:id', passportConfig.isAdmin, campaignController.step3);
 app.post('/campaign/new/resume/:id', passportConfig.isAdmin, campaignController.postCampaign);
 app.get('/campaign/edit/:id', passportConfig.isAdmin, campaignController.edit);
-app.post('/campaign/edit/', passportConfig.isAdmin, campaignController.postCampaign);
+app.post('/campaign/edit/', campaignController.postCampaign);
 app.get('/campaign/view/:id', campaignController.view);
 
 
