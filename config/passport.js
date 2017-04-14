@@ -172,7 +172,7 @@ passport.use(new SlackStrategy({
   callbackURL: '/auth/slack/callback'
 }, (req, accessToken, tokenSecret, profile, done) => {
   if (req.user) {
-    User.findOne({ twitter: profile.id }, (err, existingUser) => {
+    User.findOne({ slack: profile.id }, (err, existingUser) => {
       if (err) { return done(err); }
       if (existingUser) {
         req.flash('errors', { msg: 'There is already a Slack account that belongs to you. Sign in with that account or delete it, then link it with your current account.' });
