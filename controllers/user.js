@@ -1,6 +1,7 @@
 const bluebird = require('bluebird');
 const crypto = bluebird.promisifyAll(require('crypto'));
 const nodemailer = require('nodemailer');
+const sgTransport = require('nodemailer-sendgrid-transport');
 const passport = require('passport');
 const User = require('../models/User');
 
@@ -72,7 +73,7 @@ exports.getAccount = (req, res) => {
  */
 exports.postUpdateProfile = (req, res, next) => {
   req.assert('email', 'Please enter a valid email address.').isEmail();
-  req.sanitize('email').normalizeEmail({ remove_dots: false });
+  req.sanitize('email').normalizeEmail({ remove_dots: true });
 
   const errors = req.validationErrors();
 
@@ -219,17 +220,16 @@ exports.postReset = (req, res, next) => {
 
   const sendResetPasswordEmail = (user) => {
     if (!user) { return; }
-    const transporter = nodemailer.createTransport({
-      service: 'SendGrid',
+    const transporter = nodemailer.createTransport(sgTransport({
       auth: {
         user: process.env.SENDGRID_USER,
-        pass: process.env.SENDGRID_PASSWORD
+        api_key: process.env.SENDGRID_API_KEY
       }
-    });
+    }));
     const mailOptions = {
       to: user.email,
-      from: 'hackathon@starter.com',
-      subject: 'Your Hackathon Starter password has been changed',
+      from: 'Mangrove Boost 🚀 <mangroveboost@gmail.com>',
+      subject: '🔑 Your Mangrove Boost password has been changed',
       text: `Hello,\n\nThis is a confirmation that the password for your account ${user.email} has just been changed.\n`
     };
     return transporter.sendMail(mailOptions)
@@ -293,17 +293,16 @@ exports.postForgot = (req, res, next) => {
   const sendForgotPasswordEmail = (user) => {
     if (!user) { return; }
     const token = user.passwordResetToken;
-    const transporter = nodemailer.createTransport({
-      service: 'SendGrid',
+    const transporter = nodemailer.createTransport(sgTransport({
       auth: {
         user: process.env.SENDGRID_USER,
-        pass: process.env.SENDGRID_PASSWORD
+        api_key: process.env.SENDGRID_API_KEY
       }
-    });
+    }));
     const mailOptions = {
       to: user.email,
-      from: 'hackathon@starter.com',
-      subject: 'Reset your password on Hackathon Starter',
+      from: 'Mangrove Boost 🚀 <mangroveboost@gmail.com>',
+      subject: '🔑 Reset your password on Mangrove Boost',
       text: `You are receiving this email because you (or someone else) have requested the reset of the password for your account.\n\n
         Please click on the following link, or paste this into your browser to complete the process:\n\n
         http://${req.headers.host}/reset/${token}\n\n

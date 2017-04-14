@@ -128,12 +128,23 @@ app.get('/onboarding/step2', passportConfig.isAuthenticated, onboardingControlle
 app.get('/onboarding/step3', passportConfig.isAuthenticated, onboardingController.step3);
 
 app.get('/admin/index', passportConfig.isAdmin, adminController.index);
+app.get('/admin/user', passportConfig.isAdmin, adminController.user);
 
 app.get('/campaign/all', passportConfig.isAdmin, campaignController.all);
-app.get('/campaign/edit/', campaignController.edit);
+app.get('/campaign/edit/', passportConfig.isAdmin, campaignController.edit);
+app.get('/campaign/new/link', passportConfig.isAdmin, campaignController.step1);
+app.post('/campaign/new/link', passportConfig.isAdmin, campaignController.postLink);
+app.get('/campaign/new/infos/:id', passportConfig.isAdmin, campaignController.step2);
+app.post('/campaign/new/infos/:id', passportConfig.isAdmin, campaignController.postInfos);
+app.get('/campaign/new/resume/:id', passportConfig.isAdmin, campaignController.step3);
+app.post('/campaign/new/resume/:id', passportConfig.isAdmin, campaignController.postCampaign);
 app.get('/campaign/edit/:id', passportConfig.isAdmin, campaignController.edit);
 app.post('/campaign/edit/', campaignController.postCampaign);
 app.get('/campaign/view/:id', campaignController.view);
+
+
+app.get('/share/:id', campaignController.shareLink);
+
 
 // SLACKBOT
 app.post('/bot', (req, res) => {
@@ -145,6 +156,9 @@ app.post('/login', userController.postLogin);
 app.get('/logout', userController.logout);
 app.get('/forgot', userController.getForgot);
 app.post('/forgot', userController.postForgot);
+
+app.get('/contact', contactController.getContact);
+app.post('/contact', contactController.postContact);
 
 app.get('/reset/:token', userController.getReset);
 app.post('/reset/:token', userController.postReset);
