@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "bcrypt-nodejs": "^0.0.3",
+    "bluebird": "^3.5.0",
     "body-parser": "^1.15.2",
     "botkit": "^0.5.2",
     "chalk": "^1.1.3",
@@ -50,6 +51,7 @@
     "request": "^2.78.0",
     "sinon": "^1.17.7",
     "sinon-mongoose": "^1.3.0",
+    "twit": "^2.2.5",
     "validator": "^7.0.0"
   },
   "devDependencies": {

@@ -321,3 +321,17 @@ exports.postForgot = (req, res, next) => {
     .then(() => res.redirect('/forgot'))
     .catch(next);
 };
+
+
+/**
+ * Check if user has signed up
+ *
+ */
+exports.checkIfSignedUp = (req, res) => {
+  if (req.user) {
+    return res.redirect('/');
+  }
+  res.render('account/login', {
+    title: 'Login'
+  });
+};

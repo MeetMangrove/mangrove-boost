@@ -130,9 +130,9 @@ app.get('/onboarding/step3', passportConfig.isAuthenticated, onboardingControlle
 app.get('/admin/index', passportConfig.isAdmin, adminController.index);
 
 app.get('/campaign/all', passportConfig.isAdmin, campaignController.all);
-app.get('/campaign/edit/', passportConfig.isAdmin, campaignController.edit);
+app.get('/campaign/edit/', campaignController.edit);
 app.get('/campaign/edit/:id', passportConfig.isAdmin, campaignController.edit);
-app.post('/campaign/edit/', passportConfig.isAdmin, campaignController.postCampaign);
+app.post('/campaign/edit/', campaignController.postCampaign);
 app.get('/campaign/view/:id', campaignController.view);
 
 // SLACKBOT

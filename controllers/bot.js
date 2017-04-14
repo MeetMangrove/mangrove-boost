@@ -1,6 +1,7 @@
 const campaignsController = require('./campaign');
 const Botkit = require('botkit');
 const dotenv = require('dotenv');
+const User = require('../models/User');
 
 dotenv.load({ path: '.env' });
 
@@ -65,10 +66,24 @@ function formatNewCampaignMessage(campaign, cb) {
             {
               "name": "newCampaign",
               "style": "primary",
-              "text": "Tweet this",
+              "text": "Everywhere",
               "type": "button",
-              "value": "support",
+              "value": "supportAll",
               "color": "good"
+            },
+            {
+              "name": "newCampaign",
+              "style": "default",
+              "text": "Facebook",
+              "type": "button",
+              "value": "supportFacebook",
+            },
+            {
+              "name": "newCampaign",
+              "style": "default",
+              "text": "Twitter",
+              "type": "button",
+              "value": "supportTwitter",
             },
             {
               "name": "newCampaign",
@@ -99,35 +114,94 @@ const optOutMessage = {
   ]
 };
 
+function formatSignUpMessage(callbackId) {
+  const signUpMessage = {
+    "attachments": [
+      {
+        "text": `Sweet 😁 First, you need to sign up there --> ${process.env.APP_URI}\n
+        Relax, it takes 5 seconds 😉`,
+        "fallback": "Buttons to let us know if you signed up",
+        "callback_id": callbackId,
+        "color": "#3AA3E3",
+        "attachment_type": "default",
+        "actions": [
+          {
+            "name": "signUp",
+            "style": "primary",
+            "text": "I signed up",
+            "type": "button",
+            "value": "signedUp",
+            "color": "good"
+          },
+          {
+            "name": "signUp",
+            "text": "It doesn't work... ",
+            "style": "danger",
+            "type": "button",
+            "value": "noSignUp"
+          }
+        ]
+      }
+    ]
+  };
+  return signUpMessage;
+}
+
 // IMPORTANT
 // All incoming messages go through here
 function handler(req, res) {
   const payload = JSON.parse(req.body.payload);
   const slack = payload.user;
   if ((payload) && (payload.callback_id)) {
-    // The first time a user says no to supporting a campaign
+    // First time user refuses to support a campaign
     if (payload.actions[0].name === 'firstNo') {
       if (payload.actions[0].value === 'helpMangrove') {
         campaignsController.postTwitter(slack.id, payload.callback_id);
         return res.send(`Tweet sent! Way to go ${slack.name} 🙏`);
-      } else if (payload.actions[0].value === 'stillNo') { // When user is sure he doesn't want to share
+      } else if (payload.actions[0].value === 'stillNo') { // User confirms he doesn't want to share
         campaignsController.addBackerToRefusedGroup(slack.id, payload.callback_id);
         return res.send(optOutMessage);
       }
-    }
-    if (payload.actions[0].name === 'newCampaign') {
-      if (payload.actions[0].value === 'support') {
-        campaignsController.addBackerToSharedGroup(slack.id, payload.callback_id);
-        campaignsController.postTwitter(slack.id, payload.callback_id);
-        return res.send(`Tweet sent! Way to go ${slack.name} 🙏`);
-      // Send tweet immediately
-      } else if (payload.actions[0].value === 'noSupport') {
+    } else if (payload.actions[0].name === 'newCampaign') { // When a new campaign starts
+      if (payload.actions[0].value === 'noSupport') {
         return res.send(formatFirstNoMessage(payload.callback_id));
       }
+      // Check if user exists
+      User.findOne({ slack: slack.id }, (err, user) => {
+        if (err) {
+          return res.end(err);
+        }
+        if (!user) {
+          // Ask user to sign up
+          return res.send(`Sweet! You need to sign up first --> ${process.env.APP_URI}/login`);
+        } else if (user) {
+          if (payload.actions[0].value === 'supportAll') {
+            if (!user.twitter || !user.facebook) {
+              return res.send(`Connect your social accountss first: ${process.env.APP_URI}/login`);
+            }
+            campaignsController.addBackerToSharedGroup(slack.id, payload.callback_id);
+            campaignsController.postTwitter(slack.id, payload.callback_id);
+            // ADD FACEBOOK POST HERE TOO
+            return res.send(`BOOM! Way to go ${slack.name} 🙏`);
+          } else if (payload.actions[0].value === 'supportTwitter') {
+            // Check that Twitter account is linked
+            if (!user.twitter) {
+              return res.send(`Connect your Twitter account first: ${process.env.APP_URI}/login`);
+            }
+            campaignsController.addBackerToSharedGroup(slack.id, payload.callback_id);
+            campaignsController.postTwitter(slack.id, payload.callback_id);
+            return res.send(`Tweet sent! Way to go ${slack.name} 🙏`);
+          } else if (payload.actions[0].value === 'supportFacebook') {
+            console.log('support with Facebook');
+          }
+        }
+      });
     }
+  } else {
     return res.send('Sorry I, didn\'t get that');
   }
 }
+
 
 // Whenever a user talks to the bot
 controller.on('direct_message', (bot, message) => {
@@ -136,10 +210,10 @@ controller.on('direct_message', (bot, message) => {
   });
 });
 
-// When a campaign is created, the bot pings slack users
+// When campaign is created, bot pings slack users
 function sendStartCampaign(campaign) {
   campaign.backers.waiting.forEach((backer) => {
-    if (backer.user_slack_id !== process.env.SLACK_USER_ID) {
+    if (backer.user_slack_id !== process.env.SLACK_USER_ID) { // IMPORTANT: Prevents from spamming whole team
       return;
     }
     bot.startPrivateConversation({ user: backer.user_slack_id }, (res, convo) => {

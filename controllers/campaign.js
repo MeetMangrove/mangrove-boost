@@ -1,4 +1,3 @@
-'use strict';
 const bluebird = require('bluebird');
 const request = bluebird.promisifyAll(require('request'), { multiArgs: true });
 const Campaign = require('../models/Campaign');
