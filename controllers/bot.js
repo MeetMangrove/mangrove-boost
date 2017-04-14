@@ -55,9 +55,7 @@ function formatNewCampaignMessage(campaign, cb) {
       "attachments": [
         {
           "title": `️${campaign.message_backers}`,
-          "title_link": `http://localhost:3000/campaign/view/${campaign._id}`,
-          "author_link": "http://flickr.com/bobby/",
-          "author_icon": "http://flickr.com/icons/bobby.jpg",
+          "title_link": `${process.env.APP_URI}/campaign/view/${campaign._id}`,
           "fallback": "A new boost is starting:",
           "callback_id": campaign._id,
           "text": `Your Tweet: "${campaign.message_to_share}"`,
@@ -66,24 +64,10 @@ function formatNewCampaignMessage(campaign, cb) {
             {
               "name": "newCampaign",
               "style": "primary",
-              "text": "Everywhere",
-              "type": "button",
-              "value": "supportAll",
-              "color": "good"
-            },
-            {
-              "name": "newCampaign",
-              "style": "default",
-              "text": "Facebook",
-              "type": "button",
-              "value": "supportFacebook",
-            },
-            {
-              "name": "newCampaign",
-              "style": "default",
-              "text": "Twitter",
+              "text": "Tweet to help Mangrove ❤️",
               "type": "button",
               "value": "supportTwitter",
+              "color": "good"
             },
             {
               "name": "newCampaign",
@@ -114,39 +98,6 @@ const optOutMessage = {
   ]
 };
 
-function formatSignUpMessage(callbackId) {
-  const signUpMessage = {
-    "attachments": [
-      {
-        "text": `Sweet 😁 First, you need to sign up there --> ${process.env.APP_URI}\n
-        Relax, it takes 5 seconds 😉`,
-        "fallback": "Buttons to let us know if you signed up",
-        "callback_id": callbackId,
-        "color": "#3AA3E3",
-        "attachment_type": "default",
-        "actions": [
-          {
-            "name": "signUp",
-            "style": "primary",
-            "text": "I signed up",
-            "type": "button",
-            "value": "signedUp",
-            "color": "good"
-          },
-          {
-            "name": "signUp",
-            "text": "It doesn't work... ",
-            "style": "danger",
-            "type": "button",
-            "value": "noSignUp"
-          }
-        ]
-      }
-    ]
-  };
-  return signUpMessage;
-}
-
 // IMPORTANT
 // All incoming messages go through here
 function handler(req, res) {
@@ -175,24 +126,16 @@ function handler(req, res) {
           // Ask user to sign up
           return res.send(`Sweet! You need to sign up first --> ${process.env.APP_URI}/login`);
         } else if (user) {
-          if (payload.actions[0].value === 'supportAll') {
-            if (!user.twitter || !user.facebook) {
-              return res.send(`Connect your social accountss first: ${process.env.APP_URI}/login`);
-            }
-            campaignsController.addBackerToSharedGroup(slack.id, payload.callback_id);
-            campaignsController.postTwitter(slack.id, payload.callback_id);
-            // ADD FACEBOOK POST HERE TOO
-            return res.send(`BOOM! Way to go ${slack.name} 🙏`);
-          } else if (payload.actions[0].value === 'supportTwitter') {
+          if (payload.actions[0].value === 'supportTwitter') {
             // Check that Twitter account is linked
             if (!user.twitter) {
               return res.send(`Connect your Twitter account first: ${process.env.APP_URI}/login`);
             }
             campaignsController.addBackerToSharedGroup(slack.id, payload.callback_id);
-            campaignsController.postTwitter(slack.id, payload.callback_id);
-            return res.send(`Tweet sent! Way to go ${slack.name} 🙏`);
-          } else if (payload.actions[0].value === 'supportFacebook') {
-            console.log('support with Facebook');
+            campaignsController.postTwitter(slack.id, payload.callback_id, (tweetData) => {
+              console.log(tweetData);
+              return res.send(`BOOM! Way to go ${slack.name}. Here's your tweet: https://twitter.com/${tweetData.user.screen_name}/status/${tweetData.id_str}`);
+            });
           }
         }
       });

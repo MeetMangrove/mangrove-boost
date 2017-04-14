@@ -305,7 +305,7 @@ exports.addBackerToRefusedGroup = (slackId, campaignId) => {
   );
 };
 
-exports.postTwitter = (slackId, campaignId) => {
+exports.postTwitter = (slackId, campaignId, callback) => {
   Campaign.findOne({ _id: campaignId }, (err, campaign) => {
     if (err) { return (err); }
     if (campaign) {
@@ -323,9 +323,10 @@ exports.postTwitter = (slackId, campaignId) => {
             access_token_secret: token.tokenSecret
           });
           // Call Twitter API and post Tweet
-          T.post('statuses/update', { status: campaign.message_to_share }, (err) => {
+          T.post('statuses/update', { status: campaign.message_to_share }, (err, data, response) => {
             if (err) { return (err); }
             console.log('Tweet sent');
+            return callback(data);
           });
         }
       });
