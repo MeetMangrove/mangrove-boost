@@ -91,28 +91,10 @@ function formatNewCampaignMessage(campaign, cb) {
 const optOutMessage = {
   "attachments": [
     {
-      "text": 'Fine then 😞 Do you still want to be notified for the next boost? 🐣',
+      "text": "Fine then 😅 I'll keep you posted",
       "fallback": "That didn't work",
       "callback_id": "optOut",
-      "color": "#3AA3E3",
-      "attachment_type": "default",
-      "actions": [
-        {
-          "name": "optOut",
-          "style": "primary",
-          "text": "Yes, notify me ❤️",
-          "type": "button",
-          "value": "userStays",
-          "color": "good"
-        },
-        {
-          "name": "optOut",
-          "text": "No, no, and no!",
-          "style": "danger",
-          "type": "button",
-          "value": "userLeaves"
-        }
-      ]
+      "color": "#3AA3E3"
     }
   ]
 };
