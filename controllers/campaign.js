@@ -75,10 +75,10 @@ exports.step3 = (req, res) => {
 */
 exports.postLink = (req, res, next) => {
   const link = req.body.link;
-  if(!link.match(new RegExp(/[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi))){
-    req.flash('errors', { msg: "Url not match pattern" });
-    return res.redirect('/campaign/new/link');
-  }
+  // if(!link.match(new RegExp(/[-a-zA-Z0-9@:%_\+.~#?&//=]{0,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi))){
+  //   req.flash('errors', { msg: "Url not match pattern" });
+  //   return res.redirect('/campaign/new/link');
+  // }
 
   const campaign = new Campaign({
     link: link
