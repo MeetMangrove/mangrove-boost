@@ -44,12 +44,12 @@ block content
               a.btn.btn-block.btn-slack.btn-social(href='/auth/slack') 
                 i.fa.fa-slack 
                 | Link your Slack account
-        if !user.facebook
-          .row.justify-content-md-center
-            .col-sm-12
-              a.btn.btn-block.btn-facebook.btn-social.text-center(href='/auth/facebook') 
-                i.fa.fa-facebook 
-                | Link your Facebook account
+        //- if !user.facebook
+        //-   .row.justify-content-md-center
+        //-     .col-sm-12
+        //-       a.btn.btn-block.btn-facebook.btn-social.text-center(href='/auth/facebook') 
+        //-         i.fa.fa-facebook 
+        //-         | Link your Facebook account
         if !user.twitter
           .row.justify-content-md-center
             .col-sm-12
@@ -65,12 +65,12 @@ block content
               a.btn.btn-block.btn-danger.btn-social.text-center(href='/account/unlink/slack') 
                 i.fa.fa-slack 
                 | Unlink your Slack account
-        if user.facebook
-          .row.justify-content-md-center
-            .col-sm-12.justify-content-md-center
-              a.btn.btn-block.btn-facebook.btn-social.text-center(href='/account/unlink/facebook') 
-                i.fa.fa-facebook
-                | Unlink your Facebook account
+        //- if user.facebook
+        //-   .row.justify-content-md-center
+        //-     .col-sm-12.justify-content-md-center
+        //-       a.btn.btn-block.btn-facebook.btn-social.text-center(href='/account/unlink/facebook') 
+        //-         i.fa.fa-facebook
+        //-         | Unlink your Facebook account
         if user.twitter
           .row.justify-content-md-center
             .col-sm-12
