@@ -44,7 +44,6 @@ exports.shareLink = (req, res) => {
       req.flash('error', { msg: 'Link unavailable.' });
       return res.redirect('/');
    }
-console.log(share);
 
    share.stats.clic = share.stats.clic + 1;
    share.save((err, result) => {

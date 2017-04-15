@@ -7,7 +7,11 @@ block content
         h2 Do you want to spread the vibe?
         br
         h1 #{campaign.name}
-        img(src='/'+campaign.image)
+        h5 Message
+        p #{campaign.message_to_share}
+        img(src='/'+campaign.image, width=470)
+        h5 Private message
+        p #{campaign.message_backers}
         form.form-horizontal(id='new-campaign-form', method='POST')
           input(type='hidden', name='_csrf', value=_csrf)
           button.btn.primary-btn(type='submit') 
