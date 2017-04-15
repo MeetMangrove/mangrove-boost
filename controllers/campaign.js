@@ -143,7 +143,6 @@ exports.postInfos = (req, res, next) => {
         return res.redirect(`/campaign/new/infos/${campaign._id}`);
       }
       getSlackUsers((slackUsers) => {
-        console.log('users', slackUsers)
         formatBackers(slackUsers, (backers) => {
           Campaign.findOneAndUpdate(
             { _id: campaign._id },

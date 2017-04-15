@@ -54,20 +54,20 @@ function formatFirstNoMessage(callbackId) {
 
 function formatNewCampaignMessage(campaign, cb) {
   const newCampaignMessage = {
-      "text": "🚀*New boost starting*🚀",
+      "text": `🚀 *Help make the buzz*: _${campaign.name}_ 🚀`,
       "attachments": [
         {
-          "title": `️${campaign.message_backers}`,
+          "title": `️What: ${campaign.message_backers}`,
           "title_link": `${process.env.APP_URI}/campaign/view/${campaign._id}`,
           "fallback": "A new boost is starting:",
           "callback_id": campaign._id,
-          "text": `Your Tweet: "${campaign.message_to_share}"`,
+          "text": `How: By tweeting this: _${campaign.message_to_share}_`,
           "attachment_type": "default",
           "actions": [
             {
               "name": "newCampaign",
               "style": "primary",
-              "text": "Tweet to help Mangrove ❤️",
+              "text": "Tweet ❤️",
               "type": "button",
               "value": "supportTwitter",
               "color": "good"
@@ -141,7 +141,6 @@ let optOutMessage = {
 function handler(req, res) {
   const payload = JSON.parse(req.body.payload);
   const slack = payload.user;
-  console.log(payload);
   if ((payload) && (payload.callback_id)) {
     // First time user refuses to support a campaign
     if (payload.actions[0].name === 'firstNo') {
@@ -172,7 +171,16 @@ function handler(req, res) {
             }
             campaignsController.addBackerToSharedGroup(slack.id, payload.callback_id);
             campaignsController.postTwitter(slack.id, payload.callback_id, (tweetData) => {
-              return res.send(`BOOM! Way to go ${slack.name}. Here's your tweet: https://twitter.com/${tweetData.user.screen_name}/status/${tweetData.id_str}`);
+              return res.send({
+                "attachments": [
+                  {
+                    "text": `BOOM! Way to go ${slack.name} 🙏 <https://twitter.com/${tweetData.user.screen_name}/status/${tweetData.id_str}|See your tweet>`,
+                    "fallback": "Sending a tweet",
+                    "callback_id": "optOut",
+                    "color": "#3AA3E3"
+                  }
+                ]
+              });
             });
           }
         }
@@ -182,7 +190,6 @@ function handler(req, res) {
     return res.send('Sorry I, didn\'t get that');
   }
 }
-
 
 // Whenever a user talks to the bot
 controller.on('direct_message', (bot, message) => {
