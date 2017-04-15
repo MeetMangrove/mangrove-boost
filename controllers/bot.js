@@ -173,18 +173,11 @@ function handler(req, res) {
                 return res.send(`Connect your Twitter account first: ${process.env.APP_URI}/login`);
               });
             }
+            res.send('Preparing your tweet...');
             campaignsController.addBackerToSharedGroup(slack.id, payload.callback_id);
             campaignsController.postTwitter(slack.id, payload.callback_id, (tweetData) => {
-              return res.send({
-                "attachments": [
-                  {
-                    "text": `BOOM! Way to go ${slack.name} 🙏 <https://twitter.com/${tweetData.user.screen_name}/status/${tweetData.id_str}|See your tweet>`,
-                    "fallback": "Sending a tweet",
-                    "callback_id": "optOut",
-                    "color": "#3AA3E3"
-                  }
-                ]
-              });
+              console.log('tweetData', tweetData);
+              sendShareConfirmation(tweetData, slack.id);
             });
           }
         }
@@ -213,6 +206,21 @@ function sendStartCampaign(campaign) {
       formatNewCampaignMessage(campaign, (campaignMessage) => {
         convo.say(campaignMessage);
       });
+    });
+  });
+}
+
+function sendShareConfirmation(tweetData, slackId) {
+  bot.startPrivateConversation({ user: slackId }, (res, convo) => {
+    convo.say({
+      "attachments": [
+        {
+          "text": `BOOM! Way to go 🙏 <https://twitter.com/${tweetData.user.screen_name}/status/${tweetData.id_str}|See your tweet>`,
+          "fallback": "Sending a tweet",
+          "callback_id": "optOut",
+          "color": "#3AA3E3"
+        }
+      ]
     });
   });
 }
