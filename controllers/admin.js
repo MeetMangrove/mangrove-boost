@@ -17,12 +17,12 @@ exports.index = (req, res) => {
  */
 exports.user = (req, res) => {
   let campaigns = [];
-  User.find({}, (err, results) => {
+  User.find({}, (err, users) => {
     if (err) { return next(err); }
 
     res.render('admin/user', {
       title: 'List users of Mangrove Boost',
-      users: results
+      users: users
     });
   });
 };
