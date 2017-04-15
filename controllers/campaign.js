@@ -94,6 +94,37 @@ exports.postLink = (req, res, next) => {
 }
 
 
+/**
+ * Get All Slack users
+ */
+function getSlackUsers(callback) {
+  const token = process.env.SLACK_TOKEN;
+  request.get({
+    url: 'https://slack.com/api/users.list',
+    qs: { token },
+    json: true
+  }, (err, request, body) => {
+    if (err) {
+      return (err);
+    }
+    return callback(body.members);
+  });
+}
+
+function formatBackers(slackUsers, callback) {
+  const backers = [];
+  for (let i = 0; i < slackUsers.length; i++) {
+    backers.push({
+      user_slack_id: slackUsers[i].id,
+      auth_post: false
+    });
+    if (i === (slackUsers.length - 1)) {
+      return callback(backers);
+    }
+  }
+}
+
+
  /**
   * POST /campaign/new/link
   * Create a new local account.
@@ -112,6 +143,7 @@ exports.postInfos = (req, res, next) => {
         return res.redirect(`/campaign/new/infos/${campaign._id}`);
       }
       getSlackUsers((slackUsers) => {
+        console.log('users', slackUsers)
         formatBackers(slackUsers, (backers) => {
           Campaign.findOneAndUpdate(
             { _id: campaign._id },
@@ -146,7 +178,7 @@ exports.postCampaign = (req, res, next) => {
     req.flash('sucess', { msg: "Campaign send" });
     return res.redirect('/campaign/all');
   });
-}
+};
 
 
  /**
@@ -164,35 +196,6 @@ exports.view = (req, res) => {
   });
 };
 
-/**
- * Get All Slack users
- */
-function getSlackUsers(callback) {
-  const token = process.env.SLACK_TOKEN;
-  request.get({
-    url: 'https://slack.com/api/users.list',
-    qs: { token: token },
-    json: true
-  }, (err, request, body) => {
-    if (err) {
-      return (err);
-    }
-    return callback(body.members);
-  });
-}
-
-function formatBackers(slackUsers, callback) {
-  const backers = [];
-  for (let i = 0; i < slackUsers.length; i++) {
-    backers.push({
-      user_slack_id: slackUsers[i].id,
-      auth_post: false
-    });
-    if (i === (slackUsers.length - 1)) {
-      return callback(backers);
-    }
-  }
-}
 
 // if backer supports the campaign, put it in the 'shared' group
 exports.addBackerToSharedGroup = (slackId, campaignId) => {
