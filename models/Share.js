@@ -8,7 +8,9 @@ const shareSchema = new mongoose.Schema({
   link: String,
   image: String,
   date_release: Date,
-  clic: Number
+  stats: {
+    clic: Number
+  },
 }, { timestamps: true });
 
 

@@ -38,6 +38,7 @@ const contactController = require('./controllers/contact');
 const onboardingController = require('./controllers/onboarding');
 const campaignController = require('./controllers/campaign');
 const botController = require('./controllers/bot');
+const shareController = require('./controllers/share');
 
 /**
  * API keys and Passport configuration.
@@ -130,6 +131,8 @@ app.get('/onboarding/step3', passportConfig.isAuthenticated, onboardingControlle
 app.get('/admin/index', passportConfig.isAdmin, adminController.index);
 app.get('/admin/user', passportConfig.isAdmin, adminController.user);
 
+app.get('/test' , campaignController.testtwit);
+
 app.get('/campaign/all', passportConfig.isAdmin, campaignController.all);
 app.get('/campaign/edit/', passportConfig.isAdmin, campaignController.edit);
 app.get('/campaign/new/link', passportConfig.isAdmin, campaignController.step1);
@@ -143,7 +146,7 @@ app.post('/campaign/edit/', campaignController.postCampaign);
 app.get('/campaign/view/:id', campaignController.view);
 
 
-app.get('/share/:id', campaignController.shareLink);
+app.get('/share/:id', shareController.shareLink);
 
 
 // SLACKBOT

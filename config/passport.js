@@ -139,7 +139,6 @@ passport.use(new SlackStrategy({
   clientSecret: process.env.SLACK_SECRET,
   callbackURL: '/auth/slack/callback'
 }, (req, accessToken, tokenSecret, profile, done) => {
-  console.log(profile);
   if (req.user) {
     User.findOne({ email: profile.user.email }, (err, existingUser) => {
       if (err) { return done(err); }

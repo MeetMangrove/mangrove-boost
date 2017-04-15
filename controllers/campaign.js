@@ -1,8 +1,8 @@
 const bluebird = require('bluebird');
 const request = bluebird.promisifyAll(require('request'), { multiArgs: true });
 const Campaign = require('../models/Campaign');
-const Share = require('../models/Share');
 const User = require('../models/User');
+const ShareController = require('./share');
 const Bot = bluebird.promisifyAll(require('./bot'), { multiArgs: true });
 const Twit = require('twit');
 
@@ -75,6 +75,8 @@ exports.step3 = (req, res) => {
 */
 exports.postLink = (req, res, next) => {
   const link = req.body.link;
+  // TODO:
+  // Check REGEX match all url
   // if(!link.match(new RegExp(/[-a-zA-Z0-9@:%_\+.~#?&//=]{0,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi))){
   //   req.flash('errors', { msg: "Url not match pattern" });
   //   return res.redirect('/campaign/new/link');
@@ -192,96 +194,6 @@ function formatBackers(slackUsers, callback) {
   }
 }
 
-
-exports.createShare = (slackId, campaignId, socialAccount, cb) => {
-  User.findOne({ slack: slackId }, (err, user) => {
-    if (err) {
-      return (err);
-    }
-
-    Campaign.findOne({ _id: campaignId }, (err, campaign) => {
-      if (err) {
-        return (err);
-      }
-
-      const share = new Share();
-      share = {
-        campaign: campaign._id,
-        backer: user.slack,
-        social_account: socialAccount,
-        message_to_share: campaign.message_to_share,
-        link: campaign.link,
-        image: campaign.image
-      };
-
-      share.save((err, share) => {
-        if (err) {
-          return cb(err);
-        }
-
-        return cb(share);
-      });
-    });
-  });
-}
-
-/**
-* GET /share/:id
-* Redirect To Link
-*/
-exports.shareLink = (req, res) => {
-  Share.findOne({ _id: req.params.id }, (err, share) => {
-    if (err) {
-      req.flash('error', { msg: 'Link unavailable.' });
-      return res.redirect('/');
-   }
-
-   Share.findOneAndUpdate(
-     { _id: share._id },
-     { clic: share.clic + 1  },
-     (err, campaign) => {
-       if (err) {
-         console.log(err);
-         return err;
-       } else if (campaign) {
-         console.log(`${user.profile.name} added to ${campaign.name}`);
-       } else {
-         console.log('An error ocured');
-       }
-   });
-   return res.redirect(share.link);
-  });
-};
-
-
-exports.postTwitter = (slackId, campaignId) => {
-  Campaign.findOne({ _id: campaignId }, (err, campaign) => {
-    if (err) {
-      return (err);
-    }
-    if (campaign) {
-      User.findOne({ slack: slackId }, (err, user) => {
-        if (err) {
-          return (err);
-        }
-        const token = user.tokens.find(token => token.kind === 'twitter');
-        const T = new Twit({
-          consumer_key: process.env.TWITTER_KEY,
-          consumer_secret: process.env.TWITTER_SECRET,
-          access_token: token.accessToken,
-          access_token_secret: token.tokenSecret
-        });
-        T.post('statuses/update', { status: campaign.message_to_share }, (err) => {
-          if (err) {
-            return (err);
-          }
-          console.log('Tweet posté');
-        });
-      });
-    }
-  });
-};
-
 // if backer supports the campaign, put it in the 'shared' group
 exports.addBackerToSharedGroup = (slackId, campaignId) => {
   Campaign.findOneAndUpdate(
@@ -316,6 +228,16 @@ exports.addBackerToRefusedGroup = (slackId, campaignId) => {
   );
 };
 
+exports.testtwit = (req, res) => {
+  this.postTwitter("U110CED2T", "58f1ff9a78a078798ac566ae", (tweetData) => {
+    console.log(tweetData);
+    console.log(`BOOM! Way to go. Here's your tweet: https://twitter.com/${tweetData.user.screen_name}/status/${tweetData.id_str}`);
+  });
+  res.render('home', {
+    title: 'TESTTWITTER'
+  });
+};
+
 exports.postTwitter = (slackId, campaignId, callback) => {
   Campaign.findOne({ _id: campaignId }, (err, campaign) => {
     if (err) { return (err); }
@@ -326,7 +248,7 @@ exports.postTwitter = (slackId, campaignId, callback) => {
           return (err);
         }
         if (user) {
-          this.createShare(user.slack, campaign._id, "twitter", (share) => {
+          ShareController.createShare(user.slack, campaign._id, "twitter", (share) => {
             const token = user.tokens.find(token => token.kind === 'twitter');
             const T = new Twit({
               consumer_key: process.env.TWITTER_KEY,
@@ -334,7 +256,7 @@ exports.postTwitter = (slackId, campaignId, callback) => {
               access_token: token.accessToken,
               access_token_secret: token.tokenSecret
             });
-            
+
             // Call Twitter API and post Tweet
             T.post('statuses/update', { status: campaign.message_to_share }, (err, data, response) => {
               if (err) { return (err); }
