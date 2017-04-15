@@ -81,7 +81,8 @@ exports.postLink = (req, res, next) => {
   // }
 
   const campaign = new Campaign({
-    link: link
+    link: link,
+    status: "draft"
   });
 
   campaign.save((err) => {
@@ -101,7 +102,7 @@ exports.postInfos = (req, res, next) => {
     campaign.name = req.body.name;
     campaign.message_to_share = req.body.message_to_share;
     campaign.message_backers = req.body.message_backers;
-    campaign.date_release = req.body.date_release;
+    campaign.end_date = req.body.end_date;
 
     campaign.save((err) => {
       if (err) {
@@ -132,6 +133,12 @@ exports.postInfos = (req, res, next) => {
 exports.postCampaign = (req, res, next) => {
   Campaign.findOne({ _id: req.params.id }, (err, campaign) => {
     if (err) { return next(err); }
+
+    campaign.status = "ongoing";
+    campaign.start_date = new Date();
+    campaign.save((err) => {
+      if (err) { return (err); }
+    });
 
     Bot.sendStartCampaign(campaign);
     req.flash('sucess', { msg: "Campaign send" });
