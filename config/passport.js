@@ -5,7 +5,10 @@ const FacebookStrategy = require('passport-facebook').Strategy;
 const SlackStrategy = require('passport-slack').Strategy;
 const TwitterStrategy = require('passport-twitter').Strategy;
 
+const BotController = require('../controllers/bot');
+
 const User = require('../models/User');
+const BufferedUser = require('../models/BufferedUser');
 
 passport.serializeUser((user, done) => {
   done(null, user.id);
@@ -112,7 +115,17 @@ passport.use(new TwitterStrategy({
           user.save((err) => {
             if (err) { return done(err); }
             req.flash('info', { msg: 'Twitter account has been linked.' });
-            done(err, user);
+            BufferedUser.findOne({backer: user.slack}, (err, existingBuffer) => {
+              if (err) { return done(err); }
+
+              if(existingBuffer){
+                BotController.sendTwitterCampaign(existingBuffer.campaign, user.slack, (res) => {
+                  done(err, user);
+                });
+              }else{
+                done(err, user);
+              }
+            });
           });
         });
       }
@@ -127,7 +140,17 @@ passport.use(new TwitterStrategy({
       user.twitter = profile.id;
       user.tokens.push({ kind: 'twitter', accessToken, tokenSecret });
       user.save((err) => {
-        done(err, user);
+        BufferedUser.findOne({backer: user.slack}, (err, existingBuffer) => {
+          if (err) { return done(err); }
+
+          if(existingBuffer){
+            BotController.sendTwitterCampaign(existingBuffer.campaign, user.slack, (res) => {
+              done(err, user);
+            });
+          }else{
+            done(err, user);
+          }
+        });
       });
     });
   }

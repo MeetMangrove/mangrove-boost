@@ -195,6 +195,16 @@ function handler(req, res) {
   }
 }
 
+exports.sendTwitterCampaign = (campaignId, slackId, cb) => {
+  campaignsController.addBackerToSharedGroup(slackId, campaignId);
+  campaignsController.postTwitter(slackId, campaignId, (tweetData) => {
+    bot.startPrivateConversation({ user: slackId }, (res, convo) => {
+      convo.say(`BOOM! Way to go ${slack.name} 🙏 <https://twitter.com/${tweetData.user.screen_name}/status/${tweetData.id_str}|See your tweet>`);
+      return cb(null);
+    });
+  });
+}
+
 // Whenever a user talks to the bot
 controller.on('direct_message', (bot, message) => {
   bot.startPrivateConversation({ user: process.env.ANTONIN_SLACK_ID }, (res, convo) => {
