@@ -28,20 +28,21 @@ function formatFirstNoMessage(callbackId) {
         "fallback": "Too bad.",
         "callback_id": callbackId,
         "color": "#3AA3E3",
+        "replace_original": "true",
         "attachment_type": "default",
         "actions": [
           {
             "name": "firstNo",
             "style": "primary",
-            "text": "I made a mistake",
+            "text": "No, I want to tweet",
             "type": "button",
             "value": "helpMangrove",
             "color": "good"
           },
           {
             "name": "firstNo",
-            "text": "I don't want to help",
-            "style": "danger",
+            "text": "Yes",
+            "style": "default",
             "type": "button",
             "value": "stillNo"
           }
@@ -63,6 +64,8 @@ function formatNewCampaignMessage(campaign, cb) {
           "callback_id": campaign._id,
           "text": `How: By tweeting this: _${campaign.message_to_share}_`,
           "attachment_type": "default",
+          "image_url": `${process.env.NGROK_URI}/${campaign.image}`,
+          "thumb_url": `${process.env.NGROK_URI}/${campaign.image}`,
           "actions": [
             {
               "name": "newCampaign",
@@ -75,7 +78,7 @@ function formatNewCampaignMessage(campaign, cb) {
             {
               "name": "newCampaign",
               "text": "I don't want to help",
-              "style": "danger",
+              "style": "default",
               "type": "button",
               "value": "noSupport"
             }
@@ -85,7 +88,7 @@ function formatNewCampaignMessage(campaign, cb) {
           "color": "#3AA3E3",
         }
       ],
-      "response_type": "ephemeral",
+      "replace_original": "true"
   };
   return cb(newCampaignMessage);
 }
@@ -113,14 +116,14 @@ function formatFollowUpMessage(campaign, cb) {
             {
               "name": "followUp",
               "text": "Don't help",
-              "style": "danger",
+              "style": "default",
               "type": "button",
               "value": "noSupport"
             }
           ]
         }
       ],
-      "response_type": "ephemeral",
+      "replace_original": "true"
   };
   return cb(followUpMessage);
 }
@@ -128,12 +131,13 @@ function formatFollowUpMessage(campaign, cb) {
 let optOutMessage = {
   "attachments": [
     {
-      "text": "Fine then 😅 I'll keep you posted",
+      "text": "Fine then 😅 I'll keep you posted when a new boost starts!",
       "fallback": "That didn't work",
       "callback_id": "optOut",
       "color": "#3AA3E3"
     }
-  ]
+  ],
+  "replace_original": "true"
 };
 
 // IMPORTANT
@@ -173,10 +177,9 @@ function handler(req, res) {
                 return res.send(`Connect your Twitter account first: ${process.env.APP_URI}/login`);
               });
             }
-            res.send('Preparing your tweet...');
+            res.send('Preparing your tweet...BRR..BRR...');
             campaignsController.addBackerToSharedGroup(slack.id, payload.callback_id);
             campaignsController.postTwitter(slack.id, payload.callback_id, (tweetData) => {
-              console.log('tweetData', tweetData);
               sendShareConfirmation(tweetData, slack.id);
             });
           }
@@ -199,14 +202,13 @@ controller.on('direct_message', (bot, message) => {
 function sendStartCampaign(campaign) {
   campaign.backers.waiting.forEach((backer) => {
     // IMPORTANT: Prevents from spamming whole team
-    if (backer.user_slack_id !== process.env.ANTONIN_SLACK_ID) {
-      return;
-    }
-    bot.startPrivateConversation({ user: backer.user_slack_id }, (res, convo) => {
-      formatNewCampaignMessage(campaign, (campaignMessage) => {
-        convo.say(campaignMessage);
+    if (backer === process.env.ANTONIN_SLACK_ID || backer === process.env.STEVEN_SLACK_ID || backer === process.env.ADRIEN_SLACK_ID) {
+      bot.startPrivateConversation({ user: backer }, (res, convo) => {
+        formatNewCampaignMessage(campaign, (campaignMessage) => {
+          convo.say(campaignMessage);
+        });
       });
-    });
+    }
   });
 }
 
@@ -220,7 +222,8 @@ function sendShareConfirmation(tweetData, slackId) {
           "callback_id": "optOut",
           "color": "#3AA3E3"
         }
-      ]
+      ],
+      "replace_original": "true"
     });
   });
 }
@@ -239,10 +242,10 @@ function findOngoingCampaigns(callback) {
 function sendFollowUpMessage(campaign) {
   campaign.backers.waiting.forEach((backer) => {
     // IMPORTANT: Prevents from spamming whole team
-    if (backer.user_slack_id !== process.env.ANTONIN_SLACK_ID) {
+    if (backer !== process.env.ANTONIN_SLACK_ID) {
       return;
     }
-    bot.startPrivateConversation({ user: backer.user_slack_id }, (res, convo) => {
+    bot.startPrivateConversation({ user: backer }, (res, convo) => {
       formatFollowUpMessage(campaign, (followUpMessage) => {
         convo.say(followUpMessage);
       });

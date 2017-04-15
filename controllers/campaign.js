@@ -115,10 +115,7 @@ function getSlackUsers(callback) {
 function formatBackers(slackUsers, callback) {
   const backers = [];
   for (let i = 0; i < slackUsers.length; i++) {
-    backers.push({
-      user_slack_id: slackUsers[i].id,
-      auth_post: false
-    });
+    backers.push(slackUsers[i].id);
     if (i === (slackUsers.length - 1)) {
       return callback(backers);
     }
@@ -203,7 +200,7 @@ exports.addBackerToSharedGroup = (slackId, campaignId) => {
   Campaign.findOneAndUpdate(
     { _id: campaignId },
     { $push: { 'backers.shared': slackId },
-      $pull: { 'backers.waiting': { auth_post: false, user_slack_id: slackId } },
+      $pull: { 'backers.waiting': slackId },
     },
     { new: true },
     (err, updatedCampaign) => {
@@ -220,7 +217,7 @@ exports.addBackerToRefusedGroup = (slackId, campaignId) => {
   Campaign.findOneAndUpdate(
     { _id: campaignId },
     { $push: { 'backers.refused': slackId },
-      $pull: { 'backers.waiting': { auth_post: false, user_slack_id: slackId } },
+      $pull: { 'backers.waiting': slackId },
     },
     { new: true },
     (err, updatedCampaign) => {
