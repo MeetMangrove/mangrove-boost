@@ -5,6 +5,7 @@ const User = require('../models/User');
 const ShareController = require('./share');
 const Bot = bluebird.promisifyAll(require('./bot'), { multiArgs: true });
 const Twit = require('twit');
+const path = require('path');
 
 /**
  * GET /campaign/all
@@ -114,10 +115,7 @@ function getSlackUsers(callback) {
 function formatBackers(slackUsers, callback) {
   const backers = [];
   for (let i = 0; i < slackUsers.length; i++) {
-    backers.push({
-      user_slack_id: slackUsers[i].id,
-      auth_post: false
-    });
+    backers.push(slackUsers[i].id);
     if (i === (slackUsers.length - 1)) {
       return callback(backers);
     }
@@ -202,7 +200,7 @@ exports.addBackerToSharedGroup = (slackId, campaignId) => {
   Campaign.findOneAndUpdate(
     { _id: campaignId },
     { $push: { 'backers.shared': slackId },
-      $pull: { 'backers.waiting': { auth_post: false, user_slack_id: slackId } },
+      $pull: { 'backers.waiting': slackId },
     },
     { new: true },
     (err, updatedCampaign) => {
@@ -219,7 +217,7 @@ exports.addBackerToRefusedGroup = (slackId, campaignId) => {
   Campaign.findOneAndUpdate(
     { _id: campaignId },
     { $push: { 'backers.refused': slackId },
-      $pull: { 'backers.waiting': { auth_post: false, user_slack_id: slackId } },
+      $pull: { 'backers.waiting': slackId },
     },
     { new: true },
     (err, updatedCampaign) => {
@@ -259,12 +257,23 @@ exports.postTwitter = (slackId, campaignId, callback) => {
               access_token: token.accessToken,
               access_token_secret: token.tokenSecret
             });
-
-            // Call Twitter API and post Tweet
-            T.post('statuses/update', { status: `${campaign.message_to_share} ${process.env.APP_URI}/share/${share._id} ` }, (err, data, response) => {
-              if (err) { return (err); }
-              console.log('Tweet sent');
-              return callback(data);
+            //
+            // post media via the chunked media upload API.
+            const filePath = path.join(__dirname, '../', `uploads/${campaign.image}`);
+            T.postMediaChunked({ file_path: filePath }, (err, data, response) => {
+              if (err) { return err; }
+              const mediaIdStr = data.media_id_string;
+              // now we can reference the media and post a tweet (media will attach to the tweet)
+              const params = {
+                status: `${campaign.message_to_share} ${process.env.APP_URI}/share/${share._id} `,
+                media_ids: [mediaIdStr]
+              };
+              // Call Twitter API and post Tweet
+              T.post('statuses/update', params, (err, tweetData, response) => {
+                if (err) { return (err); }
+                console.log('Tweet sent');
+                return callback(tweetData);
+              });
             });
           });
         }
