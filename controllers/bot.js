@@ -163,6 +163,7 @@ function handler(req, res) {
         if (!user) {
           BufferedUser.addUserToBuffer(slack.id, payload.callback_id, (buffer) => {
             // Ask user to sign up
+            console.log('BUFFER', buffer);
             return res.send(`Sweet! You need to sign up first --> ${process.env.APP_URI}/login`);
           });
         } else if (user) {
