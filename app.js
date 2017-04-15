@@ -19,8 +19,21 @@ const expressValidator = require('express-validator');
 const expressStatusMonitor = require('express-status-monitor');
 const sass = require('node-sass-middleware');
 const multer = require('multer');
+const crypto = require('crypto');
 
-const upload = multer({ dest: path.join(__dirname, 'uploads') });
+const storage = multer.diskStorage({
+  destination: path.join(__dirname, 'uploads'),
+  filename: function (req, file, cb) {
+    crypto.pseudoRandomBytes(16, function (err, raw) {
+      if (err) return cb(err)
+
+      cb(null, raw.toString('hex') + path.extname(file.originalname))
+    });
+  }
+});
+
+const upload = multer({ storage: storage });
+// const upload = multer({ dest: path.join(__dirname, 'uploads') });
 
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
@@ -92,7 +105,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 app.use((req, res, next) => {
-  if ((req.path === '/api/upload') || (req.path === '/bot'))  {
+  if ((req.path.indexOf("/campaign/new/infos") != -1 ) || (req.path === '/bot'))  {
     next();
   } else {
     lusca.csrf()(req, res, next);
@@ -119,6 +132,7 @@ app.use((req, res, next) => {
   next();
 });
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
+app.use(express.static(path.join(__dirname, 'uploads'), { maxAge: 31557600000 }));
 
 /**
  * Primary app routes.
@@ -135,12 +149,15 @@ app.get('/test' , campaignController.testtwit);
 
 app.get('/campaign/all', passportConfig.isAdmin, campaignController.all);
 app.get('/campaign/edit/', passportConfig.isAdmin, campaignController.edit);
+
 app.get('/campaign/new/link', passportConfig.isAdmin, campaignController.step1);
 app.post('/campaign/new/link', passportConfig.isAdmin, campaignController.postLink);
 app.get('/campaign/new/infos/:id', passportConfig.isAdmin, campaignController.step2);
-app.post('/campaign/new/infos/:id', passportConfig.isAdmin, campaignController.postInfos);
+app.post('/campaign/new/infos/:id', passportConfig.isAdmin, upload.single('image'), campaignController.postInfos);
+
 app.get('/campaign/new/resume/:id', passportConfig.isAdmin, campaignController.step3);
 app.post('/campaign/new/resume/:id', passportConfig.isAdmin, campaignController.postCampaign);
+
 app.get('/campaign/edit/:id', passportConfig.isAdmin, campaignController.edit);
 app.post('/campaign/edit/', campaignController.postCampaign);
 app.get('/campaign/view/:id', campaignController.view);
@@ -174,11 +191,10 @@ app.get('/account/unlink/:provider', passportConfig.isAuthenticated, userControl
 /**
  * API examples routes.
  */
-app.get('/api', apiController.getApi);
-app.get('/api/facebook', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getFacebook);
-app.post('/api/twitter', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.postTwitter);
-app.get('/api/upload', apiController.getFileUpload);
-app.post('/api/upload', upload.single('myFile'), apiController.postFileUpload);
+// app.get('/api', apiController.getApi);
+// app.get('/api/facebook', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getFacebook);
+// app.post('/api/twitter', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.postTwitter);
+// app.get('/api/upload', apiController.getFileUpload);
 
 
 /**

@@ -105,6 +105,7 @@ exports.postInfos = (req, res, next) => {
     campaign.message_to_share = req.body.message_to_share;
     campaign.message_backers = req.body.message_backers;
     campaign.end_date = req.body.end_date;
+    campaign.image = req.file.filename;
 
     campaign.save((err) => {
       if (err) {
