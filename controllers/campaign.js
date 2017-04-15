@@ -75,10 +75,10 @@ exports.step3 = (req, res) => {
 */
 exports.postLink = (req, res, next) => {
   const link = req.body.link;
-  if(!link.match(new RegExp(/[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi))){
-    req.flash('errors', { msg: "Url not match pattern" });
-    return res.redirect('/campaign/new/link');
-  }
+  // if(!link.match(new RegExp(/[-a-zA-Z0-9@:%_\+.~#?&//=]{0,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi))){
+  //   req.flash('errors', { msg: "Url not match pattern" });
+  //   return res.redirect('/campaign/new/link');
+  // }
 
   const campaign = new Campaign({
     link: link
@@ -186,12 +186,11 @@ function formatBackers(slackUsers, callback) {
 }
 
 
-exports.createShare = (slackId, campaignId, socialAccount) => {
+exports.createShare = (slackId, campaignId, socialAccount, cb) => {
   User.findOne({ slack: slackId }, (err, user) => {
     if (err) {
       return (err);
     }
-
 
     Campaign.findOne({ _id: campaignId }, (err, campaign) => {
       if (err) {
@@ -207,8 +206,13 @@ exports.createShare = (slackId, campaignId, socialAccount) => {
         link: campaign.link,
         image: campaign.image
       };
-      share.save((err) => {
-        done(err, share);
+
+      share.save((err, share) => {
+        if (err) {
+          return cb(err);
+        }
+
+        return cb(share);
       });
     });
   });
@@ -315,18 +319,21 @@ exports.postTwitter = (slackId, campaignId, callback) => {
           return (err);
         }
         if (user) {
-          const token = user.tokens.find(token => token.kind === 'twitter');
-          const T = new Twit({
-            consumer_key: process.env.TWITTER_KEY,
-            consumer_secret: process.env.TWITTER_SECRET,
-            access_token: token.accessToken,
-            access_token_secret: token.tokenSecret
-          });
-          // Call Twitter API and post Tweet
-          T.post('statuses/update', { status: campaign.message_to_share }, (err, data, response) => {
-            if (err) { return (err); }
-            console.log('Tweet sent');
-            return callback(data);
+          this.createShare(user.slack, campaign._id, "twitter", (share) => {
+            const token = user.tokens.find(token => token.kind === 'twitter');
+            const T = new Twit({
+              consumer_key: process.env.TWITTER_KEY,
+              consumer_secret: process.env.TWITTER_SECRET,
+              access_token: token.accessToken,
+              access_token_secret: token.tokenSecret
+            });
+            
+            // Call Twitter API and post Tweet
+            T.post('statuses/update', { status: campaign.message_to_share }, (err, data, response) => {
+              if (err) { return (err); }
+              console.log('Tweet sent');
+              return callback(data);
+            });
           });
         }
       });

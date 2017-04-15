@@ -37,7 +37,7 @@ exports.postContact = (req, res) => {
   const mailOptions = {
     to: 'mangroveboost@gmail.com',
     from: `${req.body.name} <${req.body.email}>`,
-    subject: 'Contact Form | Mangrove Boost',
+    subject: `Message from ${req.body.name} | Mangrove Boost`,
     text: req.body.message
   };
 
