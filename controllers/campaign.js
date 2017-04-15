@@ -259,7 +259,7 @@ exports.postTwitter = (slackId, campaignId, callback) => {
             });
 
             // Call Twitter API and post Tweet
-            T.post('statuses/update', { status: `${campaign.message_to_share} http://localhost:3000/share/${share._id} ` }, (err, data, response) => {
+            T.post('statuses/update', { status: `${campaign.message_to_share} ${process.env.APP_URI}/share/${share._id} ` }, (err, data, response) => {
               if (err) { return (err); }
               console.log('Tweet sent');
               return callback(data);
