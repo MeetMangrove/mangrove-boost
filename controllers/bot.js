@@ -148,7 +148,7 @@ function handler(req, res) {
 
 // Whenever a user talks to the bot
 controller.on('direct_message', (bot, message) => {
-  bot.startPrivateConversation({ user: process.env.SLACK_USER_ID }, (res, convo) => {
+  bot.startPrivateConversation({ user: process.env.ANTONIN_SLACK_ID }, (res, convo) => {
     convo.say('I\'ll tell you when a new campaign starts.');
   });
 });
@@ -156,9 +156,11 @@ controller.on('direct_message', (bot, message) => {
 // When campaign is created, bot pings slack users
 function sendStartCampaign(campaign) {
   campaign.backers.waiting.forEach((backer) => {
-    if (backer.user_slack_id !== process.env.SLACK_USER_ID) { // IMPORTANT: Prevents from spamming whole team
+    if (backer.user_slack_id !== process.env.ANTONIN_SLACK_ID) { // IMPORTANT: Prevents from spamming whole team
       return;
     }
+    console.log(backer);
+    console.log(campaign);
     bot.startPrivateConversation({ user: backer.user_slack_id }, (res, convo) => {
       formatNewCampaignMessage(campaign, (campaignMessage) => {
         convo.say(campaignMessage);
