@@ -3,13 +3,13 @@ const Botkit = require('botkit');
 const dotenv = require('dotenv');
 const CronJob = require('cron').CronJob;
 
+const BufferedUser = require('../bufferedUser');
 const User = require('../models/User');
 const Campaign = require('../models/Campaign');
 
 dotenv.load({ path: '.env' });
 
-const controller = Botkit.slackbot({
-});
+const controller = Botkit.slackbot({});
 
 const bot = controller.spawn({
   token: process.env.SLACK_BOT_TOKEN,
@@ -161,13 +161,17 @@ function handler(req, res) {
           return res.end(err);
         }
         if (!user) {
-          // Ask user to sign up
-          return res.send(`Sweet! You need to sign up first --> ${process.env.APP_URI}/login`);
+          BufferedUser.addUserToBuffer(slack.id, payload.callback_id, (buffer) => {
+            // Ask user to sign up
+            return res.send(`Sweet! You need to sign up first --> ${process.env.APP_URI}/login`);
+          });
         } else if (user) {
           if (payload.actions[0].value === 'supportTwitter') {
             // Check that Twitter account is linked
             if (!user.twitter) {
-              return res.send(`Connect your Twitter account first: ${process.env.APP_URI}/login`);
+              BufferedUser.addUserToBuffer(slack.id, payload.callback_id, (buffer) => {
+                return res.send(`Connect your Twitter account first: ${process.env.APP_URI}/login`);
+              });
             }
             campaignsController.addBackerToSharedGroup(slack.id, payload.callback_id);
             campaignsController.postTwitter(slack.id, payload.callback_id, (tweetData) => {
