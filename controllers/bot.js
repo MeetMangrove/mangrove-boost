@@ -3,7 +3,7 @@ const Botkit = require('botkit');
 const dotenv = require('dotenv');
 const CronJob = require('cron').CronJob;
 
-const BufferedUser = require('../bufferedUser');
+const BufferedUser = require('./bufferedUser');
 const User = require('../models/User');
 const Campaign = require('../models/Campaign');
 
