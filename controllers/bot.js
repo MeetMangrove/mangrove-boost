@@ -2,6 +2,7 @@ const campaignsController = require('./campaign');
 const Botkit = require('botkit');
 const dotenv = require('dotenv');
 const User = require('../models/User');
+const bufferUserController = require('./bufferedUser');
 
 dotenv.load({ path: '.env' });
 
@@ -123,13 +124,17 @@ function handler(req, res) {
           return res.end(err);
         }
         if (!user) {
-          // Ask user to sign up
-          return res.send(`Sweet! You need to sign up first --> ${process.env.APP_URI}/login`);
+          bufferUserController.addUserToBuffer(slack.id, payload.callback_id, (buffer) => {
+            // Ask user to sign up
+            return res.send(`Sweet! You need to sign up first --> ${process.env.APP_URI}/login`);
+          });
         } else if (user) {
           if (payload.actions[0].value === 'supportTwitter') {
             // Check that Twitter account is linked
             if (!user.twitter) {
-              return res.send(`Connect your Twitter account first: ${process.env.APP_URI}/login`);
+              bufferUserController.addUserToBuffer(slack.id, payload.callback_id, (buffer) => {
+                return res.send(`Connect your Twitter account first: ${process.env.APP_URI}/login`);
+              });
             }
             campaignsController.addBackerToSharedGroup(slack.id, payload.callback_id);
             campaignsController.postTwitter(slack.id, payload.callback_id, (tweetData) => {
@@ -148,7 +153,7 @@ function handler(req, res) {
 
 // Whenever a user talks to the bot
 controller.on('direct_message', (bot, message) => {
-  bot.startPrivateConversation({ user: process.env.ANTONIN_SLACK_ID }, (res, convo) => {
+  bot.startPrivateConversation({ user: process.env.STEVEN_SLACK_ID }, (res, convo) => {
     convo.say('I\'ll tell you when a new campaign starts.');
   });
 });
@@ -156,7 +161,7 @@ controller.on('direct_message', (bot, message) => {
 // When campaign is created, bot pings slack users
 function sendStartCampaign(campaign) {
   campaign.backers.waiting.forEach((backer) => {
-    if (backer.user_slack_id !== process.env.ANTONIN_SLACK_ID) { // IMPORTANT: Prevents from spamming whole team
+    if (backer.user_slack_id !== process.env.STEVEN_SLACK_ID) { // IMPORTANT: Prevents from spamming whole team
       return;
     }
     console.log(backer);
