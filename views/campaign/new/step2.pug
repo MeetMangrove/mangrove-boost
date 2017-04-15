@@ -6,7 +6,7 @@ block content
       .main-container
         .row.justify-content-md-center
           .col-md-12  
-            form.form-horizontal(id='new-campaign-form', method='POST')
+            form.form-horizontal(id='new-campaign-form', method='POST', role='form', enctype='multipart/form-data')
               input(type='hidden', name='_csrf', value=_csrf)
               .form-group
                 label.col-sm-3.control-label(for='name') Name
@@ -27,6 +27,9 @@ block content
                   span 
                     small
                       | Paris GMT+1
+              .form-group
+                label.col-sm-3.control-label Image
+                input.form-control(type='file', name='image')
               br
               button.btn.primary-btn(type='submit') 
                 h4 🔥 🔥 Boom 🔥 🔥
