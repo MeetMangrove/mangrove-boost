@@ -9,7 +9,8 @@ block content
         h1 #{campaign.name}
         h5 Message
         p #{campaign.message_to_share}
-        img(src='/'+campaign.image, width=470)
+        if campaign.image
+          img(src='/'+campaign.image, width=470)
         h5 Private message
         p #{campaign.message_backers}
         form.form-horizontal(id='new-campaign-form', method='POST')
