@@ -73,7 +73,7 @@ exports.getAccount = (req, res) => {
  */
 exports.postUpdateProfile = (req, res, next) => {
   req.assert('email', 'Please enter a valid email address.').isEmail();
-  req.sanitize('email').normalizeEmail({ remove_dots: true });
+  req.sanitize('email');
 
   const errors = req.validationErrors();
 

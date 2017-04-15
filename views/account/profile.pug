@@ -4,9 +4,8 @@ block content
   .row
     .col-md-6.col-md-offset-3
       .main-container
-        .page-header
-          h3 🤙 Hey #{user.profile.firstName}
-
+        h3 🤙 Hey #{user.profile.firstName}
+        br
         form.form-horizontal(action='/account/profile', method='POST')
           input(type='hidden', name='_csrf', value=_csrf)
           .form-group
@@ -18,52 +17,74 @@ block content
               button.btn.btn.btn-primary(type='submit')
                 i.fa.fa-pencil
                 | Change Email
-
-        .page-header
-          h3 Change Password
-
+        br
+        h3 Change Password
+        br
         form.form-horizontal(action='/account/password', method='POST')
           input(type='hidden', name='_csrf', value=_csrf)
           .form-group
             label.col-sm-3.control-label(for='password') New Password
             .col-sm-7
-              input.form-control(type='password', name='password', id='password')
+              input.input-plain-grey(type='password', name='password', id='password')
           .form-group
             label.col-sm-3.control-label(for='confirmPassword') Confirm Password
             .col-sm-7
-              input.form-control(type='password', name='confirmPassword', id='confirmPassword')
+              input.input-plain-grey(type='password', name='confirmPassword', id='confirmPassword')
           .form-group
             .col-sm-offset-3.col-sm-4
               button.btn.btn-primary(type='submit')
                 i.fa.fa-lock
                 | Change Password
-
-        .page-header
-          h3 Delete Account
-
-        form.form-horizontal(action='/account/delete', method='POST')
-          .form-group
-            p.col-sm-offset-3.col-sm-4 You can delete your account, but keep in mind this action is irreversible.
-            input(type='hidden', name='_csrf', value=_csrf)
-            .col-sm-offset-3.col-sm-4
+        br
+        h3 UnLinked Accounts
+        br
+        if !user.slack
+          .row.justify-content-md-center
+            .col-sm-12
+              a.btn.btn-block.btn-slack.btn-social(href='/auth/slack') 
+                i.fa.fa-slack 
+                | Link your Slack account
+        if !user.facebook
+          .row.justify-content-md-center
+            .col-sm-12
+              a.btn.btn-block.btn-facebook.btn-social.text-center(href='/auth/facebook') 
+                i.fa.fa-facebook 
+                | Link your Facebook account
+        if !user.twitter
+          .row.justify-content-md-center
+            .col-sm-12
+              a.btn.btn-block.btn-twitter.btn-social.text-center(href='/auth/twitter') 
+                i.fa.fa-twitter
+                | Link your Twitter account      
+        br        
+        h3 Linked Accounts
+        br
+        if user.slack
+          .row.justify-content-md-center
+            .col-sm-12.justify-content-md-center
+              a.btn.btn-block.btn-danger.btn-social.text-center(href='/account/unlink/slack') 
+                i.fa.fa-slack 
+                | Unlink your Slack account
+        if user.facebook
+          .row.justify-content-md-center
+            .col-sm-12.justify-content-md-center
+              a.btn.btn-block.btn-facebook.btn-social.text-center(href='/account/unlink/facebook') 
+                i.fa.fa-facebook
+                | Unlink your Facebook account
+        if user.twitter
+          .row.justify-content-md-center
+            .col-sm-12
+              a.btn.btn-block.btn-danger.btn-social.text-center(href='/account/unlink/twitter') 
+                i.fa.fa-twitter
+                | Unlink your Twitter account
+        br
+        br          
+        hr
+        .row
+          .col-md-12
+            form.form-horizontal(action='/account/delete', method='POST')
+              p You can delete your account, but keep in mind this action is irreversible.
+              input(type='hidden', name='_csrf', value=_csrf)
               button.btn.btn-danger(type='submit')
                 i.fa.fa-trash
                 | Delete my account
-                
-        h3 Linked Accounts
-        .row
-          .col-sm-offset-3.col-sm-4
-            if user.slack
-              p: a.text-danger(href='/account/unlink/slack') Unlink your Slack account
-            else
-              p: a(href='/auth/slack') Link your Slack account
-            .col-sm-offset-3.col-sm-4
-              if user.facebook
-                p: a.text-danger(href='/account/unlink/facebook') Unlink your Facebook account
-              else
-                p: a(href='/auth/facebook') Link your Facebook account
-            .col-sm-offset-3.col-sm-4
-              if user.twitter
-                p: a.text-danger(href='/account/unlink/twitter') Unlink your Twitter account
-              else
-                p: a(href='/auth/twitter') Link your Twitter account

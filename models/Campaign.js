@@ -2,9 +2,11 @@ const mongoose = require('mongoose');
 
 const campaignSchema = new mongoose.Schema({
   name: String,
+  status: String,
+  end_date: Date,
+  start_date: Date,
   message_to_share: String,
   message_backers: String,
-  date_release: Date,
   image: String,
   link: String,
   backers: {
