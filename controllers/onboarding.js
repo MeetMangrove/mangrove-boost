@@ -17,7 +17,7 @@ exports.step1 = (req, res) => {
  * Link social Network account.
  */
 exports.step2 = (req, res) => {
-  if(req.user && req.user.twitter && req.user.facebook){
+  if(req.user && req.user.twitter){
     return res.redirect('/onboarding/step3');
   }
 
