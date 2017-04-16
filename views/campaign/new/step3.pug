@@ -2,18 +2,29 @@ extends ../../layout
 
 block content
   .row
-    .col-md-6.col-md-offset-3
+    .col-md-8.col-md-offset-2
       .main-container
-        h2 Do you want to spread the vibe?
-        br
-        h1 #{campaign.name}
-        h5 Message
-        p #{campaign.message_to_share}
-        if campaign.image
-          img(src='/'+campaign.image, width=470)
-        h5 Private message
-        p #{campaign.message_backers}
-        form.form-horizontal(id='new-campaign-form', method='POST')
-          input(type='hidden', name='_csrf', value=_csrf)
-          button.btn.primary-btn(type='submit') 
-            h4 🔥 🔥 Boom 🔥 🔥
+        include ../../partials/admin/menu
+        .row
+          .col-md-12
+            h4 #{campaign.name} 
+            span.subtitle-admin-view Message for members
+            p.quote "#{campaign.message_to_share}"
+            h5 Private message
+            p.quote "#{campaign.message_backers}"
+            if campaign.image
+              .col-md-3 
+                span picture
+              .col-md-7
+                img(src='/'+campaign.image, width=200)
+            form.form-horizontal(id='new-campaign-form', method='POST')
+              input(type='hidden', name='_csrf', value=_csrf)
+              .row
+                .col-md-8.col-md-offset-2
+                  .row
+                    .col-md-6
+                      a.btn.btn-grey(href='/campaign/new/infos/'+campaign._id) 
+                        h4 Edit campaign
+                    .col-md-6
+                      button.btn.primary-btn(type='submit') 
+                        h4 🔥 🔥 Boom 🔥 🔥

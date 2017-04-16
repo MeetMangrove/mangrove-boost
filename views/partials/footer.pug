@@ -4,18 +4,17 @@ footer
       .col-md-6.col-md-offset-3
         if user
           .col-md-3
-            a(href='/account') Account
+            a(href='/account') My Account
           .col-md-3
-            a(href='/logout') Logout
+            a(href='/logout') 🔚 Logout
         else
-          .col-md-3
+          .col-md-3.col-md-offset-3
             a(href='/login') Login
         if user && user.role == "admin"
           .col-md-3
-            a(href='/admin/index') Admin
+            a(href='/admin/index') 💂‍ Admin
         .col-md-3    
-          a(href='/contact') 👋🏻 feedback ?
-        
+          a(href='/contact') ☝️ Feedback
         .row
           .col-md-6.col-md-offset-3
             a(href='http://www.mangrove.io/?utm_source=mangrove-boost&utm_campaign=footer_link', target='_blank')

@@ -1,4 +1,6 @@
 const User = require('../models/User');
+const Share = require('../models/Share');
+const Campaign = require('../models/Campaign');
 
 
 /**
@@ -16,9 +18,33 @@ exports.index = (req, res) => {
  * Home page.
  */
 exports.user = (req, res) => {
-  let campaigns = [];
-  User.find({}, (err, users) => {
+  User.find({}, (err, results) => {
     if (err) { return next(err); }
+
+    const users = [];
+    results.forEach((user) => {
+      const stat = {
+        impact: 0,
+        share: 0,
+
+      }
+      Share.find({backer: user.slack}, (err, shareList) => {
+        if (err) { return next(err); }
+
+        stat.share = shareList.length;
+
+        shareList.forEach((share) => {
+          stat.impact += share.stats.clic;
+        });
+      });
+
+      Campaign.count({'backers.waiting': user.slack}, (err, count) => {
+        stat.clic = count
+      });
+
+      user.stat = stat;
+      users.push(user);
+    });
 
     res.render('admin/user', {
       title: 'List users of Mangrove Boost',

@@ -2,22 +2,19 @@ extends ../layout
 
 block content
   .row
-    .col-md-12
+    .col-md-8.col-md-offset-2
       .main-container
         include ../partials/admin/menu
-        
-        H1 Users
-        br
         .row.justify-content-md-center
           .col-md-12
-            table.table.table-striped.table-bordered.table-hover.table-responsive.justify-content-md-center
+            table.table.table-striped.table-bordered.table-hoverjustify-content-md-center
               thead.thead-default
                 tr
                   th Avatar
                   th Name
-                  th Share
-                  th Respond
-                  th Unsubscribe
+                  th Shares
+                  th Incomplete signup
+                  th Clicks generated
               tbody
                 for user in users
                   tr
@@ -26,8 +23,8 @@ block content
                     td
                       | #{user.profile.firstName} #{user.profile.name}
                     td
-                      | 0
+                      | #{user.stat.share}
                     td
-                      | 0
+                      | #{user.stat.share}
                     td 
-                      | 0
+                      | #{user.stat.clic}

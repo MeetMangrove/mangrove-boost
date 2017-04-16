@@ -2,34 +2,42 @@ extends ../../layout
 
 block content
   .row
-    .col-md-6.col-md-offset-3
+    .col-md-8.col-md-offset-2
       .main-container
+        include ../../partials/admin/menu
         .row.justify-content-md-center
           .col-md-12  
             form.form-horizontal(id='new-campaign-form', method='POST', role='form', enctype='multipart/form-data')
               input(type='hidden', name='_csrf', value=_csrf)
               .form-group
-                label.col-sm-3.control-label(for='name') Name
+                label.col-sm-3.control-label(for='name') Title
                 .col-sm-7
-                  input.form-control(type='text', name='name', id='name', placeholder='Name of Campaign', autofocus, required)
+                  input.form-control(type='text', name='name', id='name', placeholder='Title of campaign', value=(campaign?(campaign.name?campaign.name:''):'') autofocus, required)
               .form-group
                 label.col-sm-3.control-label(for='message_backers') Message for backers
                 .col-sm-7
-                  textarea.form-control(name='message_backers', id='message_backers', placeholder='Message you want to share', required)
+                  textarea.form-control(name='message_backers', id='message_backers', placeholder='Explain why members should share this tweet', required)
+                    if campaign && campaign.message_backers
+                      |#{campaign.message_backers}
               .form-group
-                label.col-sm-3.justify-content-md-center.control-label(for='message_to_share') Message to share
+                label.col-sm-3.justify-content-md-center.control-label(for='message_to_share') Tweet content
                 .col-md-7
-                  textarea.form-control(name='message_to_share', id='message_to_share', placeholder='Content you want to share', required)
+                  textarea.form-control(name='message_to_share', id='message_to_share', placeholder='Max 136 characters', required)
+                    if campaign && campaign.message_to_share
+                      |#{campaign.message_to_share}
+              .form-group
+                label.col-sm-3.control-label Image
+                .col-sm-7
+                  input(type='file', name='image')
+              br
+              p Ask members everyday until ...      
               .form-group
                 label.col-sm-3.control-label(for='end_date') End date 
                 .col-sm-7
-                  input.form-control.date(type='datetime-local', name='end_date', id='end_date', placeholder='When do you want to spread the vibe', required)
+                  input.form-control.date(type='datetime-local', name='end_date', id='end_date', value=(campaign?(campaign.end_date?campaign.end_date:''):'') placeholder='When do you want to spread the vibe', required)
                   span 
                     small
                       | Paris GMT+1
-              .form-group
-                label.col-sm-3.control-label Image
-                input.form-control(type='file', name='image')
               br
               button.btn.primary-btn(type='submit') 
                 h4 👌🏻 Let's Go !
