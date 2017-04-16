@@ -16,7 +16,6 @@ exports.all = (req, res) => {
   const campaigns = [];
   Campaign.find({}, (err, results) => {
     if (err) { return next(err); }
-    console.log(results);
     const campaigns = [];
     results.forEach((campaign) => {
       const stat = {
@@ -32,11 +31,12 @@ exports.all = (req, res) => {
 
         shareList.forEach((share) => {
           stat.impact += share.stats.clic;
+          
         });
       });
       stat.respond = campaign.backers.waiting.length;
       stat.unsubscribe = campaign.backers.refused.length;
-
+console.log(stat);
       campaign.stat = stat;
       campaigns.push(campaign);
     });

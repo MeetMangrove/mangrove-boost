@@ -118,6 +118,7 @@ app.use((req, res, next) => {
   next();
 });
 app.use((req, res, next) => {
+  res.locals.path = req.path;
   // After successful login, redirect back to the intended page
   if (!req.user &&
       req.path !== '/login' &&

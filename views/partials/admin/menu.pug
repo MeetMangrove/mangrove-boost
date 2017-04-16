@@ -1,7 +1,7 @@
 .row.admin-menu
   .col-md-2.col-md-offset-3
-    a.link-admin-menu(href='/campaign/new/link') 🔥 Start
+    a.link-admin-menu(class={'active-link-admin': path === '/campaign/new/link'}, href='/campaign/new/link') 🔥 Start
   .col-md-2
-    a.link-admin-menu(href='/campaign/all') Campaigns
+    a.link-admin-menu(class={'active-link-admin': path === '/campaign/all'}, href='/campaign/all') Campaigns
   .col-md-2
-    a.link-admin-menu(href='/admin/user') Users
+    a.link-admin-menu(class={'active-link-admin': path === '/admin/user'}, href='/admin/user') Users

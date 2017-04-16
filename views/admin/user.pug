@@ -7,24 +7,25 @@ block content
         include ../partials/admin/menu
         .row.justify-content-md-center
           .col-md-12
-            table.table.table-striped.table-bordered.table-hoverjustify-content-md-center
-              thead.thead-default
-                tr
-                  th Avatar
-                  th Name
-                  th Shares
-                  th Incomplete signup
-                  th Clicks generated
-              tbody
-                for user in users
+            .table-responsive
+              table.table.table-striped.table-bordered.table-hoverjustify-content-md-center
+                thead.thead-default
                   tr
-                    td
-                      img(src=user.profile.picture, width=50, height=50)
-                    td
-                      | #{user.profile.firstName} #{user.profile.name}
-                    td
-                      | #{user.stat.share}
-                    td
-                      | #{user.stat.share}
-                    td 
-                      | #{user.stat.clic}
+                    th Avatar
+                    th Name
+                    th Shares
+                    th Incomplete signup
+                    th Clicks generated
+                tbody
+                  for user in users
+                    tr
+                      td
+                        img(src=user.profile.picture, width=25, height=25)
+                      td
+                        | #{user.profile.firstName} #{user.profile.name}
+                      td
+                        | #{user.stat.share}
+                      td
+                        | #{user.stat.share}
+                      td 
+                        | #{user.stat.clic}

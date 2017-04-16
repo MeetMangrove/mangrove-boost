@@ -59,7 +59,6 @@ footer{
 }
 
 .fixed-bottom{
-  position: absolute;
   bottom: 0;
   margin-top: 50px;
 }
@@ -97,10 +96,26 @@ footer{
 
 .btn-twitter{
   background-color: #4099FF;
+  margin: 10px 0;
 
 }
+
+.grey-link{
+  color: #4A4A4A;
+  font-size: 14px;
+  font-family: Proxima_regular;
+  margin: 10px 0;
+}
+
+.grey-link:hover{
+  text-decoration: none;
+  color: #4A4A4A;
+  font-weight: bold;
+}
+
 .btn-facebook{
   background-color: #3b5998;
+  margin: 10px 0;
 }
 
 .primary-btn{
@@ -108,6 +123,7 @@ footer{
   border: 1px solid #C72F40;
   color: white;
   padding: 10px 40px;
+  margin: 10px 0;
 }
 
 .btn-slack{
@@ -115,6 +131,7 @@ footer{
   border: 1px solid #DDDEE0;
   padding: 5px;
   color: #333333 !important;
+  margin: 10px 0;
 }
 
 .btn i{

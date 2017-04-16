@@ -11,3 +11,20 @@
   color: #4A4A4A;
   line-height: 25px;
 }
+
+.btn-grey-bordered{
+  border: 2px solid #CBCBD0;
+  border-radius: 4px;
+  margin: 10px 0;
+  color: #CBCBD0;
+  background: #fff;
+  font-family: Proxima_semi_bold;
+  font-size: 16px;
+  padding: 10px 40px;
+}
+.btn-grey-bordered:hover{
+  color: #CBCBD0 !important;
+  text-decoration: none;
+  text-transform: none;
+  font-weight: bold;
+}
