@@ -266,7 +266,7 @@ function sendFollowUpMessage(campaign) {
 // Background job that checks ongoing campaigns,
 // and send follow up messages to waiting backers
 // runs every day at 10am Paris time
-new CronJob('10 * * *', () => {
+new CronJob('01 10 * * *', () => {
   findOngoingCampaigns((campaigns) => {
     campaigns.forEach((campaign) => {
       sendFollowUpMessage(campaign);
