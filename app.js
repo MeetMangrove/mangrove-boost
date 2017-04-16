@@ -229,4 +229,5 @@ app.listen(app.get('port'), () => {
   console.log('  Press CTRL-C to stop\n');
 });
 
+app.locals.env = process.env;
 module.exports = app;

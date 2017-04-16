@@ -46,7 +46,7 @@ header{
 .main-container{
   border-radius: 10px;
   background: white;
-  padding: 50px 40px;
+  padding: 30px 40px;
   color: #53585F;
   -webkit-box-shadow: -2px 2px 3px 0px rgba(0,0,0,0.25);
   -moz-box-shadow: -2px 2px 3px 0px rgba(0,0,0,0.25);
@@ -81,6 +81,11 @@ footer{
   font-family: "Proxima_semi_bold" !important;
   font-size: 16px;
   line-height: 33px;
+  display: inline-block !important;
+}
+
+.mt5{
+  margin-top: 5ox;
 }
 
 .btn-twitter{
@@ -182,4 +187,19 @@ footer{
     height: 20px;
   }
 
+}
+.admin-menu{
+  margin-bottom: 30px;
+}
+
+.unlink-link{
+  font-size: 16px;
+  color: #4A4A4A;
+  text-decoration: none;
+  line-height: 25px;
+}
+.unlink-link:hover{
+  text-decoration: none;
+  color: #4A4A4A;
+  font-weight: bold;
 }

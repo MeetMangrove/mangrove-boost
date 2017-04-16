@@ -2,15 +2,9 @@ extends ../layout
 
 block content
   .row
-    .col-md-12
+    .col-md-8.col-md-offset-2
       .main-container
         include ../partials/admin/menu
-        
-        H1 Campaign
-        br
-        a.btn.primary-btn(href='/campaign/new/link', role='button') Create new campaign
-        br
-        br
         .row.justify-content-md-center
           .col-md-12
             table.table.table-striped.table-bordered.table-hover.table-responsive.justify-content-md-center
@@ -18,8 +12,9 @@ block content
                 tr
                   th Campaign
                   th Status
-                  th Share
-                  th Respond
+                  th Impact
+                  th Shares
+                  th Incomplete signups
                   th Unsubscribe
               tbody
                 for campaign in campaigns
@@ -29,8 +24,10 @@ block content
                     td
                       span.label(class={'label-success': campaign.status === 'ongoing'})(class={ 'label-default': campaign.status === 'draft'}) #{campaign.status}
                     td
-                      | 0
+                      | #{campaign.stat.impact}
                     td
-                      | 0
+                      | #{campaign.stat.share}
+                    td
+                      | #{campaign.stat.respond}
                     td 
-                      | 0
+                      | #{campaign.stat.unsubscribe}

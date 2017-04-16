@@ -2,6 +2,7 @@ const bluebird = require('bluebird');
 const request = bluebird.promisifyAll(require('request'), { multiArgs: true });
 const Campaign = require('../models/Campaign');
 const User = require('../models/User');
+const Share = require('../models/Share');
 const ShareController = require('./share');
 const Bot = bluebird.promisifyAll(require('./bot'), { multiArgs: true });
 const Twit = require('twit');
@@ -12,13 +13,37 @@ const path = require('path');
  * History of all campaign
  */
 exports.all = (req, res) => {
-  let campaigns = [];
+  const campaigns = [];
   Campaign.find({}, (err, results) => {
     if (err) { return next(err); }
+    console.log(results);
+    const campaigns = [];
+    results.forEach((campaign) => {
+      const stat = {
+        impact: 0,
+        share: 0,
+        respond: 0,
+        unsubscribe: 0
+      }
+      Share.find({campaign: campaign._id}, (err, shareList) => {
+        if (err) { return next(err); }
+
+        stat.share = shareList.length;
+
+        shareList.forEach((share) => {
+          stat.impact += share.stats.clic;
+        });
+      });
+      stat.respond = campaign.backers.waiting.length;
+      stat.unsubscribe = campaign.backers.refused.length;
+
+      campaign.stat = stat;
+      campaigns.push(campaign);
+    });
 
     res.render('campaign/all', {
       title: 'History off campaign',
-      campaigns: results
+      campaigns: campaigns
     });
   });
 };
@@ -48,8 +73,13 @@ exports.step1 = (req, res) => {
 * Campaign Editor
 */
 exports.step2 = (req, res) => {
-  res.render('campaign/new/step2', {
-    title: 'New Campaign'
+  Campaign.findOne({ _id: req.params.id }, (err, result) => {
+    if (err) { return next(err); }
+
+    res.render('campaign/new/step2', {
+      title: 'New Campaign',
+      campaign: result
+    });
   });
 };
 
