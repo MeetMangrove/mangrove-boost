@@ -24,4 +24,6 @@ block content
                   | Sign in with Slack
         
         h1 #{campaign.name}
-            
+        for user in users
+          img(src=user.picture)
+          | #{user.profile.firstName}

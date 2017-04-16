@@ -224,10 +224,17 @@ exports.postCampaign = (req, res, next) => {
 exports.view = (req, res) => {
   Campaign.findOne({ _id: req.params.id }, (err, result) => {
     if (err) { return next(err); }
+    let users = [];
+    result.backers.shared.forEach((slackID)=>{
+      User.find({slack: slackID}, (err, user) => {
+        users.push(user);
+      });
+    });
 
     res.render('campaign/view', {
       title: 'Campaign ' + result.name,
-      campaign: result
+      campaign: result,
+      users: users
     });
   });
 };
