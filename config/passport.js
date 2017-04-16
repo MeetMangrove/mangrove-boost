@@ -160,30 +160,23 @@ passport.use(new TwitterStrategy({
 passport.use(new SlackStrategy({
   clientID: process.env.SLACK_KEY,
   clientSecret: process.env.SLACK_SECRET,
-  callbackURL: '/auth/slack/callback'
+  callbackURL: '/auth/slack/callback',
+  passReqToCallback: true
 }, (req, accessToken, tokenSecret, profile, done) => {
   if (req.user) {
-    User.findOne({ email: profile.user.email }, (err, existingUser) => {
-      if (err) { return done(err); }
-      if (existingUser) {
-        req.flash('errors', { msg: 'There is already a Slack account that belongs to you. Sign in with that account or delete it, then link it with your current account.' });
-        done(err);
-      } else {
-        User.findById(req.user.id, (err, user) => {
+    User.findOne({ email: profile.user.email }, (err, user) => {
+        if (err) { return done(err); }
+        user.slack = profile.id;
+        user.email = profile.user.email;
+        user.tokens.push({ kind: 'slack', accessToken, tokenSecret });
+        user.profile.picture = profile.user.image_192;
+        user.profile.firstName = user.profile.firstName || profile.displayName.split(' ')[0];
+        user.profile.name = user.profile.name || profile.displayName.substring(user.profile.firstName.length).trim();
+        user.save((err) => {
           if (err) { return done(err); }
-          user.slack = profile.id;
-          user.email = profile.user.email;
-          user.tokens.push({ kind: 'slack', accessToken, tokenSecret });
-          user.profile.picture = profile.user.image_192;
-          user.profile.firstName = user.profile.firstName || profile.displayName.split(' ')[0];
-          user.profile.name = user.profile.name || profile.displayName.substring(user.profile.firstName.length).trim();
-          user.save((err) => {
-            if (err) { return done(err); }
-            req.flash('info', { msg: 'Slack account has been linked.' });
-            done(err, user);
-          });
+          req.flash('info', { msg: 'Slack account has been linked.' });
+          done(err, user);
         });
-      }
     });
   } else {
     User.findOne({ slack: profile.id }, (err, existingUser) => {
