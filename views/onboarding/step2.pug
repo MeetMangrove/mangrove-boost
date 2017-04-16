@@ -10,14 +10,16 @@ block content
               li.point.active
               li.point.active
               li.point
-        h2 Nice to meet you #{user.profile.firstName}! 👋
+        h2 Awesome #{user.profile.firstName}! 👋
         br
-        h4 Where do you want to spread the vibe?
+        h5 Here you go 👇
         .row
           .col-md-12
             if !user.twitter 
               a.btn.btn-block.btn-twitter.btn-social.text-center(href='/auth/twitter')
                 i.fa.fa-twitter
                 | Connect with Twitter
+              br
+              small (No content will be tweeted without your approval)
             else
               | You are already connected your Twitter account 🏄🏻

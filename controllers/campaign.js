@@ -24,19 +24,20 @@ exports.all = (req, res) => {
         respond: 0,
         unsubscribe: 0
       }
+
       Share.find({campaign: campaign._id}, (err, shareList) => {
         if (err) { return next(err); }
 
         stat.share = shareList.length;
 
         shareList.forEach((share) => {
+          console.log(stat);
           stat.impact += share.stats.clic;
-          
         });
-      });
+      }, stat);
       stat.respond = campaign.backers.waiting.length;
       stat.unsubscribe = campaign.backers.refused.length;
-console.log(stat);
+      // console.log(stat);
       campaign.stat = stat;
       campaigns.push(campaign);
     });

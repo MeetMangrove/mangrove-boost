@@ -1,14 +1,12 @@
 footer
   .container.text-center.white
     .row
-      .col-md-6.col-md-offset-3
+      .col-md-8.col-md-offset-3
         if user
           .col-md-3
-            a(href='/account') My Account
-          .col-md-3
-            a(href='/logout') 🔚 Logout
+            a(href='/account') 🤳 My account
         else
-          .col-md-3.col-md-offset-3
+          .col-md-2.col-md-offset-2
             a(href='/login') Login
         if user && user.role == "admin"
           .col-md-3
@@ -16,18 +14,18 @@ footer
         .col-md-3    
           a(href='/contact') ☝️ Feedback
         
-        .row.fixed-bottom
-          .col-md-8.col-md-offset-2
-            a(href='http://www.mangrove.io/?utm_source=mangrove-boost&utm_campaign=footer_link', target='_blank')
-              img(src='/mangrove_logo-blanc.png', width='75', height='75')
-            br
-            | Built by 
-            a(href='https://twitter.com/adrienm', target='_blank') @adrienm
-            |  x 
-            a(href='https://twitter.com/adrianavecc', target='_blank') @adrianavecc
-            |  x 
-            a(href='https://twitter.com/antoninarcher', target='_blank') @antoninarcher
-            |  x 
-            a(href='https://twitter.com/stevensanseau', target='_blank') @stevensanseau
-            |  x 
-            a(href='https://twitter.com/etienne_mgno', target='_blank') @etienne_mgno 
+      .row.fixed-bottom
+        .col-md-8.col-md-offset-2
+          a(href='http://www.mangrove.io/?utm_source=mangrove-boost&utm_campaign=footer_link', target='_blank')
+            img(src='/mangrove_logo-blanc.png', width='75', height='75')
+          br
+          | Built by 
+          a(href='https://twitter.com/adrienm', target='_blank') @adrienm
+          |  x 
+          a(href='https://twitter.com/adrianavecc', target='_blank') @adrianavecc
+          |  x 
+          a(href='https://twitter.com/antoninarcher', target='_blank') @antoninarcher
+          |  x 
+          a(href='https://twitter.com/stevensanseau', target='_blank') @stevensanseau
+          |  x 
+          a(href='https://twitter.com/etienne_mgno', target='_blank') @etienne_mgno 
