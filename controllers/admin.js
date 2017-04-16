@@ -26,7 +26,7 @@ exports.user = (req, res) => {
       const stat = {
         impact: 0,
         share: 0,
-
+        clic: 0
       }
       Share.find({backer: user.slack}, (err, shareList) => {
         if (err) { return next(err); }
@@ -41,7 +41,7 @@ exports.user = (req, res) => {
       Campaign.count({'backers.waiting': user.slack}, (err, count) => {
         stat.clic = count
       });
-
+console.log(stat);
       user.stat = stat;
       users.push(user);
     });

@@ -13,10 +13,8 @@ block content
         h2 Nice to meet you #{user.profile.firstName}! 👋
         br
         h4 Where do you want to spread the vibe?
-        br
-        br
         .row
-          .col-md-6
+          .col-md-12
             if !user.twitter 
               a.btn.btn-block.btn-twitter.btn-social.text-center(href='/auth/twitter')
                 i.fa.fa-twitter

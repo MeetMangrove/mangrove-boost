@@ -7,27 +7,32 @@ block content
         include ../partials/admin/menu
         .row.justify-content-md-center
           .col-md-12
-            table.table.table-striped.table-bordered.table-hover.table-responsive.justify-content-md-center
-              thead.thead-default
-                tr
-                  th Campaign
-                  th Status
-                  th Impact
-                  th Shares
-                  th Incomplete signups
-                  th Unsubscribe
-              tbody
-                for campaign in campaigns
+            .table-responsive
+              table.table.table-striped.table-bordered.table-hover.justify-content-md-center
+                thead.thead-default
                   tr
-                    td
-                      a(href='/campaign/view/'+campaign._id) #{campaign.name}
-                    td
-                      span.label(class={'label-success': campaign.status === 'ongoing'})(class={ 'label-default': campaign.status === 'draft'}) #{campaign.status}
-                    td
-                      | #{campaign.stat.impact}
-                    td
-                      | #{campaign.stat.share}
-                    td
-                      | #{campaign.stat.respond}
-                    td 
-                      | #{campaign.stat.unsubscribe}
+                    th Campaign
+                    th Status
+                    th Impact
+                    th Shares
+                    th Incomplete signups
+                    th Unsubscribe
+                tbody
+                  for campaign in campaigns
+                    tr
+                      td
+                        a(href=(campaign.status === 'ongoing'?'/campaign/view/'+campaign._id :'/campaign/new/infos/'+campaign._id)) 
+                          if campaign.name 
+                            | #{campaign.name}
+                          else  
+                            | no name
+                      td
+                        span.label(class={'label-success': campaign.status === 'ongoing'})(class={ 'label-default': campaign.status === 'draft'}) #{campaign.status}
+                      td
+                        | #{campaign.stat.impact}
+                      td
+                        | #{campaign.stat.share}
+                      td
+                        | #{campaign.stat.respond}
+                      td 
+                        | #{campaign.stat.unsubscribe}

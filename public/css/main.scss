@@ -1,7 +1,5 @@
 @import "lib/bootstrap/bootstrap";
 @import "lib/font-awesome/font-awesome";
-@import "themes/default/form";
-
 
 // Scaffolding
 // -------------------------
@@ -20,6 +18,9 @@
   font-family: Proxima_semi_bold;
   src: url("../fonts/proxima_semi_bold.ttf");
 }
+
+@import "themes/default/form";
+@import "themes/default/admin";
 
 body {
   background: #FF512F;
@@ -47,7 +48,7 @@ header{
   border-radius: 10px;
   background: white;
   padding: 30px 40px;
-  color: #53585F;
+  color: #4A4A4A;
   -webkit-box-shadow: -2px 2px 3px 0px rgba(0,0,0,0.25);
   -moz-box-shadow: -2px 2px 3px 0px rgba(0,0,0,0.25);
   box-shadow: -2px 2px 3px 0px rgba(0,0,0,0.25);
@@ -55,6 +56,11 @@ header{
 
 footer{
   margin-top: 10px;
+}
+
+.fixed-bottom{
+  bottom: 0;
+  margin-top: 50px;
 }
 
 .btn-home{
@@ -90,10 +96,26 @@ footer{
 
 .btn-twitter{
   background-color: #4099FF;
+  margin: 10px 0;
 
 }
+
+.grey-link{
+  color: #4A4A4A;
+  font-size: 14px;
+  font-family: Proxima_regular;
+  margin: 10px 0;
+}
+
+.grey-link:hover{
+  text-decoration: none;
+  color: #4A4A4A;
+  font-weight: bold;
+}
+
 .btn-facebook{
   background-color: #3b5998;
+  margin: 10px 0;
 }
 
 .primary-btn{
@@ -101,6 +123,7 @@ footer{
   border: 1px solid #C72F40;
   color: white;
   padding: 10px 40px;
+  margin: 10px 0;
 }
 
 .btn-slack{
@@ -108,6 +131,7 @@ footer{
   border: 1px solid #DDDEE0;
   padding: 5px;
   color: #333333 !important;
+  margin: 10px 0;
 }
 
 .btn i{
