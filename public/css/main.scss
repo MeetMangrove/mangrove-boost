@@ -1,7 +1,5 @@
 @import "lib/bootstrap/bootstrap";
 @import "lib/font-awesome/font-awesome";
-@import "themes/default/form";
-
 
 // Scaffolding
 // -------------------------
@@ -20,6 +18,9 @@
   font-family: Proxima_semi_bold;
   src: url("../fonts/proxima_semi_bold.ttf");
 }
+
+@import "themes/default/form";
+@import "themes/default/admin";
 
 body {
   background: #FF512F;
@@ -47,7 +48,7 @@ header{
   border-radius: 10px;
   background: white;
   padding: 30px 40px;
-  color: #53585F;
+  color: #4A4A4A;
   -webkit-box-shadow: -2px 2px 3px 0px rgba(0,0,0,0.25);
   -moz-box-shadow: -2px 2px 3px 0px rgba(0,0,0,0.25);
   box-shadow: -2px 2px 3px 0px rgba(0,0,0,0.25);
@@ -55,6 +56,12 @@ header{
 
 footer{
   margin-top: 10px;
+}
+
+.fixed-bottom{
+  position: absolute;
+  bottom: 0;
+  margin-top: 50px;
 }
 
 .btn-home{
