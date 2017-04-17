@@ -36,7 +36,7 @@ function formatFirstNoMessage(callbackId) {
             "style": "primary",
             "text": "No, I want to tweet",
             "type": "button",
-            "value": "helpMangrove",
+            "value": "supportTwitter",
             "color": "good"
           },
           {
