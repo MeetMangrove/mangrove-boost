@@ -148,9 +148,31 @@ function handler(req, res) {
   if ((payload) && (payload.callback_id)) {
     // First time user refuses to support a campaign
     if (payload.actions[0].name === 'firstNo') {
-      if (payload.actions[0].value === 'helpMangrove') {
-        campaignsController.postTwitter(slack.id, payload.callback_id);
-        return res.send(`Tweet sent! Way to go ${slack.name} 🙏`);
+      if (payload.actions[0].value === 'supportTwitter') {
+        // Check if user exists
+        User.findOne({ slack: slack.id }, (err, user) => {
+          if (err) {
+            return res.end(err);
+          }
+          if (!user) {
+            BufferedUser.addUserToBuffer(slack.id, payload.callback_id, (buffer) => {
+              // Ask user to sign up
+              return res.send(`Sweet! You need to sign up first --> ${process.env.APP_URI}/login`);
+            });
+          } else if (user) {
+            // Check that Twitter account is linked
+            if (!user.twitter) {
+              BufferedUser.addUserToBuffer(slack.id, payload.callback_id, (buffer) => {
+                return res.send(`Connect your Twitter account first: ${process.env.APP_URI}/login`);
+              });
+            }
+            res.send('Preparing your tweet...BRR..BRR...');
+            campaignsController.addBackerToSharedGroup(slack.id, payload.callback_id);
+            campaignsController.postTwitter(slack.id, payload.callback_id, (tweetData) => {
+              sendShareConfirmation(tweetData, slack.id);
+            });
+          }
+        });
       } else if (payload.actions[0].value === 'stillNo') { // User confirms he doesn't want to share
         campaignsController.addBackerToRefusedGroup(slack.id, payload.callback_id);
         return res.send(optOutMessage);
