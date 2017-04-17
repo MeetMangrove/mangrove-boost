@@ -58,11 +58,11 @@ function formatNewCampaignMessage(campaign, cb) {
       "text": `🚀 *Help make the buzz*: _${campaign.name}_ 🚀`,
       "attachments": [
         {
-          "title": `️What: ${campaign.message_backers}`,
+          "title": `️${campaign.message_backers}`,
           "title_link": `${process.env.APP_URI}/campaign/view/${campaign._id}`,
           "fallback": "A new boost is starting:",
           "callback_id": campaign._id,
-          "text": `How: By tweeting this: _${campaign.message_to_share}_`,
+          "text": `Tweet this: ${campaign.message_to_share}`,
           "attachment_type": "default",
           "image_url": `${process.env.APP_URI}/${campaign.image}`,
           "thumb_url": `${process.env.APP_URI}/${campaign.image}`,
@@ -77,7 +77,7 @@ function formatNewCampaignMessage(campaign, cb) {
             },
             {
               "name": "newCampaign",
-              "text": "I don't want to help",
+              "text": "Not this time",
               "style": "default",
               "type": "button",
               "value": "noSupport"
