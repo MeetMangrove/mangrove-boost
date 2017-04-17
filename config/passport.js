@@ -165,18 +165,17 @@ passport.use(new SlackStrategy({
 }, (req, accessToken, tokenSecret, profile, done) => {
   if (req.user) {
     User.findOne({ email: profile.user.email }, (err, user) => {
+      if (err) { return done(err); }
+      user.slack = profile.id;
+      user.tokens.push({ kind: 'slack', accessToken, tokenSecret });
+      user.profile.picture = profile.user.image_192;
+      user.profile.firstName = user.profile.firstName || profile.displayName.split(' ')[0];
+      user.profile.name = user.profile.name || profile.displayName.substring(user.profile.firstName.length).trim();
+      user.save((err) => {
         if (err) { return done(err); }
-        user.slack = profile.id;
-        user.email = profile.user.email;
-        user.tokens.push({ kind: 'slack', accessToken, tokenSecret });
-        user.profile.picture = profile.user.image_192;
-        user.profile.firstName = user.profile.firstName || profile.displayName.split(' ')[0];
-        user.profile.name = user.profile.name || profile.displayName.substring(user.profile.firstName.length).trim();
-        user.save((err) => {
-          if (err) { return done(err); }
-          req.flash('info', { msg: 'Slack account has been linked.' });
-          done(err, user);
-        });
+        req.flash('info', { msg: 'Slack account has been linked.' });
+        done(err, user);
+      });
     });
   } else {
     User.findOne({ slack: profile.id }, (err, existingUser) => {
