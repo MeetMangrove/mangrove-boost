@@ -6,18 +6,17 @@ footer
           .col-md-3
             a(href='/account') 🤳 My account
         else
-          .col-md-2.col-md-offset-2
-            a(href='/login') Login
+          .col-md-3
         if user && user.role == "admin"
           .col-md-3
             a(href='/admin/index') 💂‍ Admin
-        .col-md-3    
+        .col-md-3
           a(href='/contact') ☝️ Feedback
         
       .row.fixed-bottom
         .col-md-8.col-md-offset-2
           a(href='http://www.mangrove.io/?utm_source=mangrove-boost&utm_campaign=footer_link', target='_blank')
-            img(src='/mangrove_logo-blanc.png', width='75', height='75')
+            img(src='/mangrove_logo-blanc.png', width='60', height='60')
           br
           | Built by 
           a(href='https://twitter.com/adrienm', target='_blank') @adrienm

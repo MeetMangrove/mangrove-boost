@@ -13,48 +13,41 @@ const path = require('path');
  * History of all campaign
  */
 exports.all = (req, res) => {
-  // Find all campaigns
+  const campaigns = [];
   Campaign.find({}, (err, results) => {
-    console.log(results.length);
     if (err) { return next(err); }
     const campaigns = [];
-    // With all campaigns loop
-    for (let r = 0; r < results.length; r++) {
-      const campaign = results[r];
-      // For each campaign set a STAT variable
+    results.forEach((campaign) => {
       const stat = {
         impact: 0,
         share: 0,
         respond: 0,
         unsubscribe: 0
-      };
-      // For each campaign finf all the shares
-      Share.find({ campaign: campaign._id }, (err, shareList) => {
-        if (err) { return (err); }
-        stat.respond = campaign.backers.waiting.length;
-        stat.unsubscribe = campaign.backers.refused.length;
+      }
+      Share.find({campaign: campaign._id}, (err, shareList) => {
+        if (err) { return next(err); }
+
         stat.share = shareList.length;
-        // For each share
-        for (let i = 0; i < shareList.length; i++) {
-          const share = shareList[i];
+
+        shareList.forEach((share) => {
           stat.impact += share.stats.clic;
-          if (i === (shareList.length - 1)) {
-            campaign.stat = stat;
-            campaigns.push(campaign);
-          }
-          // Check that all loops are over before rendering the elements
-          if ((r === (results.length - 1)) && (i === (shareList.length - 1))) {
-            console.log(campaigns);
-            res.render('campaign/all', {
-              title: 'History of campaign',
-              campaigns
-            });
-          }
-        }
+
+        });
       });
-    }
+      stat.respond = campaign.backers.waiting.length;
+      stat.unsubscribe = campaign.backers.refused.length;
+
+      campaign.stat = stat;
+      campaigns.push(campaign);
+    });
+
+    res.render('campaign/all', {
+      title: 'History off campaign',
+      campaigns: campaigns
+    });
   });
 };
+
 
 /**
 * GET /campaign/edit/:id
