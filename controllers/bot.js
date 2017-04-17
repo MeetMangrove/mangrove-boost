@@ -64,8 +64,8 @@ function formatNewCampaignMessage(campaign, cb) {
           "callback_id": campaign._id,
           "text": `How: By tweeting this: _${campaign.message_to_share}_`,
           "attachment_type": "default",
-          "image_url": `${process.env.NGROK_URI}/${campaign.image}`,
-          "thumb_url": `${process.env.NGROK_URI}/${campaign.image}`,
+          "image_url": `${process.env.APP_URI}/${campaign.image}`,
+          "thumb_url": `${process.env.APP_URI}/${campaign.image}`,
           "actions": [
             {
               "name": "newCampaign",
