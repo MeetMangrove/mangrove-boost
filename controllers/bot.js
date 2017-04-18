@@ -62,7 +62,7 @@ function formatNewCampaignMessage(campaign, cb) {
           "title_link": `${process.env.APP_URI}/campaign/view/${campaign._id}`,
           "fallback": "A new boost is starting:",
           "callback_id": campaign._id,
-          "text": `Tweet this: ${campaign.message_to_share}`,
+          "text": `Tweet this: ${campaign.message_to_share} Link: ${campaign.link}`,
           "attachment_type": "default",
           "image_url": `${process.env.APP_URI}/${campaign.image}`,
           "thumb_url": `${process.env.APP_URI}/${campaign.image}`,
