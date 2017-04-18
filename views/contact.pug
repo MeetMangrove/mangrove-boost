@@ -12,11 +12,11 @@ block content
             .form-group
               label.col-sm-3.control-label(for='name') Name
               .col-sm-7
-                input.input-plain-grey(type='text', name='name', id='name', placeholder='Your name', autofocus, required)
+                input.input-plain-grey(type='text', name='name', value=(user?(user.profile?user.profile.firstName+' '+user.profile.name:''):'') id='name', placeholder='Your name', autofocus, required)
             .form-group
               label.col-sm-3.control-label(for='email') Email
               .col-sm-7
-                input.input-plain-grey(type='email', name='email', id='email', placeholder='Email', required)
+                input.input-plain-grey(type='email', name='email', value=(user?(user.email?user.email:''):'') id='email', placeholder='Email', required)
             .form-group
               label.col-sm-3.justify-content-md-center.control-label(for='message') Message
               .col-md-7
