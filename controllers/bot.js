@@ -273,10 +273,10 @@ function findOngoingCampaigns(callback) {
 // for a given campaign, find all the waiting backers and ping them
 function sendFollowUpMessage(campaign) {
   campaign.backers.waiting.forEach((backer) => {
-    // IMPORTANT: Prevents from spamming whole team
-    if (backer !== process.env.ANTONIN_SLACK_ID) {
-      return;
-    }
+    // // IMPORTANT: Prevents from spamming whole team
+    // if (backer !== process.env.ANTONIN_SLACK_ID) {
+    //   return;
+    // }
     bot.startPrivateConversation({ user: backer }, (res, convo) => {
       formatFollowUpMessage(campaign, (followUpMessage) => {
         convo.say(followUpMessage);

@@ -4,7 +4,11 @@
   color: #4A4A4A;
   border-bottom: 4px solid #F43D47;
 }
-
+.link-admin-menu:focus{
+  text-decoration: none;
+  font-weight: bold;
+  color: #4A4A4A;
+}
 .link-admin-menu{
   font-family: Proxima_semi_bold;
   font-size: 16px;
